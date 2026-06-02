@@ -141,7 +141,7 @@ export function SocialProof() {
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
         >
-          ta place est ici. <span className="text-accent">rejoins-nous.</span>
+          ta place est ici. <a href="#pricing" className="text-accent hover:underline">rejoins-nous.</a>
         </motion.p>
       </div>
     </section>
