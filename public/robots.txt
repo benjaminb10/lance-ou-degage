@@ -1,0 +1,17 @@
+# Robots.txt pour lance-ou-degage.fr
+# https://lance-ou-degage.fr
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://lance-ou-degage.fr/sitemap.xml
+
+# Bloquer les ressources inutiles pour le SEO
+User-agent: *
+Disallow: /api/
+Disallow: /_build/
+Disallow: /*.json$
+
+# Crawl-delay pour être gentil avec les serveurs
+Crawl-delay: 1
