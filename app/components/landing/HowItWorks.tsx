@@ -17,7 +17,7 @@ const steps = [
     number: "03",
     title: "lâche rien",
     content:
-      "PRODEUR existe pour que lâcher devienne ridicule et que sortir des trucs devienne fun. profil public, deadline 30 jours, ton véhicule qui grimpe à chaque étape franchie. sortir, lancer, recommencer.",
+      "LANCE OU DÉGAGE existe pour que lâcher devienne ridicule et que sortir des trucs devienne fun. profil public, deadline 30 jours, ton véhicule qui grimpe à chaque étape franchie. sortir, lancer, recommencer.",
   },
 ];
 

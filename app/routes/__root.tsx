@@ -11,14 +11,14 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PRODEUR | tu sors un truc en 30 jours. ou tu dégages." },
+      { title: "LANCE OU DÉGAGE | tu sors un truc en 30 jours. ou tu dégages." },
       {
         name: "description",
         content:
           "Le club de ceux qui livrent, pendant que les autres peaufinent leur logo. Rejoins une communauté de makers qui sortent un produit tous les 30 jours.",
       },
       { name: "theme-color", content: "#0f0d0b" },
-      { property: "og:title", content: "PRODEUR | tu sors un truc en 30 jours. ou tu dégages." },
+      { property: "og:title", content: "LANCE OU DÉGAGE | tu sors un truc en 30 jours. ou tu dégages." },
       { property: "og:description", content: "Le club de ceux qui livrent. Sors un produit tous les 30 jours ou tu dégages." },
       { property: "og:type", content: "website" },
     ],
