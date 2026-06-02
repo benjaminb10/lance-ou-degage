@@ -4,9 +4,9 @@ import { Button } from "../ui/Button";
 // Paliers fondateurs - rien n'est vendu encore
 // Places décrémentées uniquement sur vente Stripe réelle
 const nextTiers = [
-  { price: 49, spots: 5 },
-  { price: 69, spots: 5 },
-  { price: 89, spots: 85, label: "fondateurs" },
+  { price: 59, spots: 5 },
+  { price: 99, spots: 10 },
+  { price: 149, spots: 80, label: "fondateurs" },
 ];
 
 export function Pricing() {
@@ -78,12 +78,17 @@ export function Pricing() {
             <p>✓ accès Discord privé à vie</p>
             <p>✓ ton profil public + véhicule</p>
             <p>✓ roadmap gamifiée 30 jours</p>
+            <p>✓ call hebdo pour avancer ou se faire dégager</p>
             <p>✓ badge fondateur permanent</p>
           </div>
 
           {/* CTA */}
           <div className="mt-10">
-            <a href="#pricing">
+            <a
+              href="https://buy.stripe.com/28EdR95XH5047JkgZc1VK00"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button variant="primary" size="lg" className="w-full md:w-auto text-xl px-12 py-4">
                 je me lance
               </Button>

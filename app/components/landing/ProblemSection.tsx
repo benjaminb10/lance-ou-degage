@@ -20,10 +20,10 @@ export function ProblemSection() {
           <p className="font-body text-lg md:text-xl text-text-secondary mb-4">
             Ton dernier projet, franchement:
           </p>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-text-primary leading-none line-through decoration-accent/60">
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-text-primary leading-none line-through decoration-accent/60">
             0 utilisateur.
           </h2>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-accent leading-none line-through decoration-text-primary/60">
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-accent leading-none line-through decoration-text-primary/60">
             0 euro.
           </h2>
         </motion.div>
