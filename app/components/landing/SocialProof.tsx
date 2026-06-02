@@ -1,49 +1,113 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Vehicle } from "./VehicleSVG";
+import { supabase, type Member } from "~/lib/supabase";
+import { MemberCard } from "~/components/MemberCard";
 
-// Fondateurs actifs
-const founders = [
+// Fallback data for when Supabase is not configured
+const fallbackFounders: Member[] = [
   {
+    id: "1",
+    stripe_session_id: null,
+    email: "",
     name: "Benjamin Benoudis",
-    avatar: "/founders/benjamin-benoudis.png",
-    projects: [
-      { name: "BeReach.ai", url: "https://bereach.ai" },
-      { name: "Viewlify.app", url: "https://www.viewlify.app" },
-      { name: "lance-ou-degage.fr", url: "https://www.lance-ou-degage.fr" },
-    ],
+    linkedin_url: null,
+    twitter_url: null,
+    avatar_url: "/founders/benjamin-benoudis.png",
+    bio: null,
+    tier: 2,
     mrr: 3500,
-    tier: 2, // Moto
+    joined_at: "",
+    onboarding_completed: true,
+    discord_invited: true,
+    is_founder: true,
+    projects: [
+      { id: "1", member_id: "1", name: "BeReach.ai", url: "https://bereach.ai", description: null, mrr: 0 },
+      { id: "2", member_id: "1", name: "Viewlify.app", url: "https://www.viewlify.app", description: null, mrr: 0 },
+      { id: "3", member_id: "1", name: "lance-ou-degage.fr", url: "https://www.lance-ou-degage.fr", description: null, mrr: 0 },
+    ],
   },
   {
+    id: "2",
+    stripe_session_id: null,
+    email: "",
     name: "Alexandre Sarfati",
-    avatar: "/founders/alexandre-sarfati.png",
-    projects: [
-      { name: "PIMMS.io", url: "https://pimms.io" },
-      { name: "BeReach.ai", url: "https://bereach.ai" },
-    ],
+    linkedin_url: null,
+    twitter_url: null,
+    avatar_url: "/founders/alexandre-sarfati.png",
+    bio: null,
+    tier: 2,
     mrr: 3500,
-    tier: 2, // Moto
+    joined_at: "",
+    onboarding_completed: true,
+    discord_invited: true,
+    is_founder: true,
+    projects: [
+      { id: "4", member_id: "2", name: "PIMMS.io", url: "https://pimms.io", description: null, mrr: 0 },
+      { id: "5", member_id: "2", name: "BeReach.ai", url: "https://bereach.ai", description: null, mrr: 0 },
+    ],
   },
   {
+    id: "3",
+    stripe_session_id: null,
+    email: "",
     name: "Axel Briche",
-    avatar: "/founders/axel-briche.png",
-    projects: [
-      { name: "Tailwind2Landing", url: "https://tailwind2landing.com" },
-    ],
+    linkedin_url: null,
+    twitter_url: null,
+    avatar_url: "/founders/axel-briche.png",
+    bio: null,
+    tier: 0,
     mrr: 0,
-    tier: 0, // Trottinette
+    joined_at: "",
+    onboarding_completed: true,
+    discord_invited: true,
+    is_founder: true,
+    projects: [
+      { id: "6", member_id: "3", name: "Tailwind2Landing", url: "https://tailwind2landing.com", description: null, mrr: 0 },
+    ],
   },
 ];
 
-function formatMRR(mrr: number): string {
-  if (mrr === 0) return "0€";
-  if (mrr >= 1000) return `${(mrr / 1000).toFixed(mrr % 1000 === 0 ? 0 : 1)}K€`;
-  return `${mrr}€`;
-}
-
 export function SocialProof() {
+  const [members, setMembers] = useState<Member[]>(fallbackFounders);
+  const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(fallbackFounders.length);
+
+  useEffect(() => {
+    async function fetchMembers() {
+      try {
+        // Fetch top 5 members
+        const { data, error, count } = await supabase
+          .from("members")
+          .select(
+            `
+            *,
+            projects(*)
+          `,
+            { count: "exact" }
+          )
+          .eq("onboarding_completed", true)
+          .order("tier", { ascending: false })
+          .order("mrr", { ascending: false })
+          .limit(5);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          setMembers(data);
+          setTotalCount(count || data.length);
+        }
+      } catch (err) {
+        // Use fallback data if Supabase fetch fails
+        console.warn("Using fallback founder data");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMembers();
+  }, []);
+
   return (
-    <section className="relative py-32 px-4 bg-bg-dark overflow-hidden">
+    <section id="founders" className="relative py-32 px-4 bg-bg-dark overflow-hidden">
       {/* Background glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[200px]"
@@ -68,70 +132,43 @@ export function SocialProof() {
 
         {/* Leaderboard */}
         <div className="space-y-4">
-          {founders.map((founder, index) => (
-            <motion.div
-              key={founder.name}
-              className="bg-bg-darker/80 border border-text-secondary/20 p-6 flex items-center gap-6 hover:border-accent/50 transition-all"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-            >
-              {/* Rank */}
-              <div className="font-display text-3xl text-accent w-8 text-center">
-                {index + 1}
-              </div>
-
-              {/* Avatar */}
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-accent/50 flex-shrink-0">
-                <img
-                  src={founder.avatar}
-                  alt={founder.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-display text-xl text-text-primary">
-                  {founder.name}
-                </h3>
-                <div className="flex flex-wrap items-center gap-1 mt-1">
-                  {founder.projects.map((project, i) => (
-                    <span key={project.name} className="flex items-center gap-1">
-                      <a
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-body text-sm text-accent hover:text-text-primary transition-colors"
-                      >
-                        {project.name}
-                      </a>
-                      {i < founder.projects.length - 1 && (
-                        <span className="text-text-secondary">·</span>
-                      )}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* MRR + Vehicle */}
-              <div className="flex items-center gap-4 flex-shrink-0">
-                <div className="text-right">
-                  <div className="font-display text-2xl text-text-primary">
-                    {formatMRR(founder.mrr)}
-                  </div>
-                  <div className="font-body text-xs text-text-secondary uppercase tracking-wide">
-                    MRR
-                  </div>
-                </div>
-                <div className="w-12 h-12">
-                  <Vehicle tier={founder.tier} className="w-full h-full" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
+          {loading ? (
+            // Loading skeleton
+            [...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-bg-darker/80 border border-text-secondary/20 p-6 h-24 animate-pulse"
+              />
+            ))
+          ) : (
+            members.map((member, index) => (
+              <MemberCard
+                key={member.id}
+                member={member}
+                rank={index + 1}
+                delay={index * 0.1}
+              />
+            ))
+          )}
         </div>
+
+        {/* Link to full leaderboard */}
+        {totalCount > 5 && (
+          <motion.div
+            className="text-center mt-8"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <a
+              href="/leaderboard"
+              className="font-body text-accent hover:text-text-primary transition-colors"
+            >
+              voir les {totalCount} lanceurs →
+            </a>
+          </motion.div>
+        )}
 
         {/* CTA subtil */}
         <motion.p
@@ -141,7 +178,10 @@ export function SocialProof() {
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
         >
-          ta place est ici. <a href="#pricing" className="text-accent hover:underline">rejoins-nous.</a>
+          ta place est ici.{" "}
+          <a href="#pricing" className="text-accent hover:underline">
+            rejoins-nous.
+          </a>
         </motion.p>
       </div>
     </section>
