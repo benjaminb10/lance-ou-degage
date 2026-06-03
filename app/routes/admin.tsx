@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { supabaseAdmin, type Member } from "~/lib/supabase";
+import { supabase, type Member } from "~/lib/supabase";
 import { Button } from "~/components/ui/Button";
 
 export const Route = createFileRoute("/admin")({
@@ -9,24 +9,46 @@ export const Route = createFileRoute("/admin")({
 });
 
 const ADMIN_EMAIL = "benoudis.benjamin@gmail.com";
-const ADMIN_PASSWORD = "benoudis.benjamin@gmail.com!";
 
 function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const logged = localStorage.getItem("admin_logged_in");
-    if (logged === "true") {
-      setIsLoggedIn(true);
-    }
+    // Check if already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email === ADMIN_EMAIL) {
+        setIsLoggedIn(true);
+      }
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user?.email === ADMIN_EMAIL) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-bg-darker flex items-center justify-center">
+        <div className="text-text-secondary font-body">Chargement...</div>
+      </main>
+    );
+  }
 
   if (!isLoggedIn) {
     return <LoginForm onLogin={() => setIsLoggedIn(true)} />;
   }
 
-  return <AdminDashboard onLogout={() => {
-    localStorage.removeItem("admin_logged_in");
+  return <AdminDashboard onLogout={async () => {
+    await supabase.auth.signOut();
     setIsLoggedIn(false);
   }} />;
 }
@@ -35,14 +57,23 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      localStorage.setItem("admin_logged_in", "true");
-      onLogin();
-    } else {
+    setLoading(true);
+    setError("");
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
       setError("Identifiants incorrects");
+      setLoading(false);
+    } else {
+      onLogin();
     }
   }
 
@@ -86,8 +117,8 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
               required
             />
           </div>
-          <Button type="submit" variant="primary" className="w-full">
-            connexion
+          <Button type="submit" variant="primary" className="w-full" disabled={loading}>
+            {loading ? "..." : "connexion"}
           </Button>
         </form>
       </motion.div>
@@ -107,7 +138,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   }, []);
 
   async function fetchMembers() {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("members")
       .select("*, projects(*)")
       .order("created_at", { ascending: false });
@@ -121,7 +152,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   }
 
   async function toggleVisible(member: Member) {
-    const { error } = await supabaseAdmin
+    const { error } = await supabase
       .from("members")
       .update({ visible: !member.visible })
       .eq("id", member.id);
@@ -140,7 +171,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       return;
     }
 
-    const { error } = await supabaseAdmin
+    const { error } = await supabase
       .from("members")
       .delete()
       .eq("id", member.id);
@@ -171,7 +202,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     if (!editingId) return;
     setSaving(true);
 
-    const { error } = await supabaseAdmin
+    const { error } = await supabase
       .from("members")
       .update(editForm)
       .eq("id", editingId);
