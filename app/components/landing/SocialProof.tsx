@@ -20,6 +20,8 @@ const fallbackFounders: Member[] = [
     onboarding_completed: true,
     discord_invited: true,
     is_founder: true,
+    visible: true,
+    whatsapp: null,
     projects: [
       { id: "1", member_id: "1", name: "BeReach.ai", url: "https://bereach.ai", description: null, mrr: 0 },
       { id: "2", member_id: "1", name: "Viewlify.app", url: "https://www.viewlify.app", description: null, mrr: 0 },
@@ -41,6 +43,8 @@ const fallbackFounders: Member[] = [
     onboarding_completed: true,
     discord_invited: true,
     is_founder: true,
+    visible: true,
+    whatsapp: null,
     projects: [
       { id: "4", member_id: "2", name: "PIMMS.io", url: "https://pimms.io", description: null, mrr: 0 },
       { id: "5", member_id: "2", name: "BeReach.ai", url: "https://bereach.ai", description: null, mrr: 0 },
@@ -61,6 +65,8 @@ const fallbackFounders: Member[] = [
     onboarding_completed: true,
     discord_invited: true,
     is_founder: true,
+    visible: true,
+    whatsapp: null,
     projects: [
       { id: "6", member_id: "3", name: "Tailwind2Landing", url: "https://tailwind2landing.com", description: null, mrr: 0 },
     ],
@@ -86,6 +92,7 @@ export function SocialProof() {
             { count: "exact" }
           )
           .eq("onboarding_completed", true)
+          .eq("visible", true)
           .order("tier", { ascending: false })
           .order("mrr", { ascending: false })
           .limit(5);

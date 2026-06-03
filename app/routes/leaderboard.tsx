@@ -24,6 +24,7 @@ function LeaderboardPage() {
         `
         )
         .eq("onboarding_completed", true)
+        .eq("visible", true)
         .order("tier", { ascending: false })
         .order("mrr", { ascending: false });
 

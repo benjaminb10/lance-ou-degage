@@ -2,14 +2,23 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn("Supabase credentials not found. Some features will be disabled.");
 }
 
+// Client normal (pour les users - respecte RLS)
 export const supabase = createClient(
   supabaseUrl || "https://placeholder.supabase.co",
   supabaseAnonKey || "placeholder"
+);
+
+// Client admin (bypass RLS - pour la page admin)
+// Note: La service key doit être dans VITE_SUPABASE_SERVICE_KEY
+export const supabaseAdmin = createClient(
+  supabaseUrl || "https://placeholder.supabase.co",
+  supabaseServiceKey || "placeholder"
 );
 
 // Types
@@ -29,6 +38,7 @@ export interface Member {
   onboarding_completed: boolean;
   discord_invited: boolean;
   is_founder: boolean;
+  visible: boolean;
   projects?: Project[];
 }
 
