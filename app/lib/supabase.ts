@@ -18,6 +18,7 @@ export interface Member {
   stripe_session_id: string | null;
   email: string;
   name: string;
+  whatsapp: string | null;
   linkedin_url: string | null;
   twitter_url: string | null;
   avatar_url: string | null;
