@@ -7,4 +7,4 @@ dist
 .vite
 .vercel
 .env*.local
-CLAUDE.md
+.claude-secrets
