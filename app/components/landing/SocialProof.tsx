@@ -133,7 +133,7 @@ export function SocialProof() {
             Fondateurs
           </span>
           <h2 className="font-display text-4xl md:text-6xl text-text-primary mt-2">
-            ils ont déjà lancé.
+            ils livrent.
           </h2>
         </motion.div>
 

@@ -36,10 +36,13 @@ export function HowItWorks() {
             Comment ça marche
           </span>
           <h2 className="font-display text-4xl md:text-6xl text-text-primary mt-2">
-            30 jours pour passer de l'idée au premier client,
+            30 jours pour franchir ton prochain palier,
             <br />
-            <span className="text-accent">étape par étape.</span>
+            <span className="text-accent">pas pour réfléchir.</span>
           </h2>
+          <p className="font-body text-lg text-text-secondary mt-6 max-w-2xl">
+            nouveau projet ou produit déjà en ligne, peu importe. ton objectif 30 jours, c'est ta prochaine étape.
+          </p>
         </motion.div>
 
         {/* Steps - Layout asymétrique */}

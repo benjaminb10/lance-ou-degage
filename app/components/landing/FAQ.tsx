@@ -13,6 +13,11 @@ const faqs = [
       "parfait, arrête de fignoler le plan et sors la plus petite version utilisable.",
   },
   {
+    question: "j'ai déjà un projet lancé, c'est pour moi?",
+    answer:
+      "oui. ton contrat 30 jours c'est ton prochain palier: une feature, ton premier client payant, scaler. ici lancer veut dire sortir un truc, pas repartir de zéro.",
+  },
+  {
     question: "pas encore d'idée?",
     answer:
       "tu vas en choisir une vite, pas trois semaines à demander la permission au ciel.",
