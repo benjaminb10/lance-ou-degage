@@ -53,14 +53,16 @@ export function MemberCard({ member, rank, delay = 0 }: MemberCardProps) {
         <div className="flex flex-wrap items-center gap-1 mt-1">
           {member.projects?.slice(0, 3).map((project, i) => (
             <span key={project.id} className="flex items-center gap-1">
-              <a
-                href={project.url || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (project.url) window.open(project.url, "_blank");
+                }}
                 className="font-body text-xs md:text-sm text-accent hover:text-text-primary transition-colors"
               >
                 {project.name}
-              </a>
+              </button>
               {i < Math.min((member.projects?.length || 0), 3) - 1 && (
                 <span className="text-text-secondary">·</span>
               )}

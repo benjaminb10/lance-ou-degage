@@ -1,18 +1,21 @@
 import { motion } from "framer-motion";
 import { Button } from "../ui/Button";
 
-// Paliers fondateurs - rien n'est vendu encore
-// Places décrémentées uniquement sur vente Stripe réelle
+// Paliers fondateurs
+const soldOutTiers = [
+  { price: 29, label: "COMPLET" },
+];
+
 const nextTiers = [
-  { price: 59, spots: 5 },
-  { price: 99, spots: 10 },
-  { price: 149, spots: 80, label: "fondateurs" },
+  { price: 49, spots: 10 },
+  { price: 99, spots: 80, label: "fondateurs" },
 ];
 
 export function Pricing() {
   // Tier actif actuel
-  const currentPrice = 29;
-  const currentRemaining = 1;
+  const currentPrice = 49;
+  const originalPrice = 59;
+  const currentRemaining = 5;
 
   return (
     <section id="pricing" className="relative py-32 px-4 overflow-hidden">
@@ -57,10 +60,15 @@ export function Pricing() {
 
           {/* Prix */}
           <div className="mt-6">
+            <span className="font-display text-4xl md:text-5xl text-text-secondary/50 line-through mr-4">
+              {originalPrice}€
+            </span>
             <span className="font-display text-8xl md:text-9xl text-text-primary">
               {currentPrice}€
             </span>
-            <span className="font-display text-2xl md:text-3xl text-accent ml-2">
+          </div>
+          <div className="mt-2">
+            <span className="font-display text-2xl md:text-3xl text-accent">
               à vie
             </span>
           </div>
@@ -85,7 +93,7 @@ export function Pricing() {
           {/* CTA */}
           <div className="mt-10">
             <a
-              href="https://buy.stripe.com/28EdR95XH5047JkgZc1VK00"
+              href="https://buy.stripe.com/9B68wPcm5fEIgfQ8sG1VK01"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -114,18 +122,23 @@ export function Pricing() {
           </p>
 
           <div className="flex justify-center items-center gap-2 md:gap-4 flex-wrap">
-            {/* Tier actuel (petit rappel) */}
-            <div className="px-3 py-2 md:px-4 md:py-3 bg-accent/20 border-2 border-accent text-accent font-display text-base md:text-xl">
-              29€ ✓
+            {/* Tier complet */}
+            <div className="relative px-3 py-2 md:px-4 md:py-3 bg-bg-darker/50 border border-text-primary/30 text-text-primary/40 font-display text-base md:text-xl">
+              <span>29€</span>
+              <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-text-primary/60" />
             </div>
 
             {/* Flèche */}
             <span className="text-text-primary/60 text-base md:text-xl">→</span>
 
-            {/* Prochains tiers grisés */}
+            {/* Prochains tiers */}
             {nextTiers.map((tier, index) => (
               <div key={tier.price} className="flex items-center gap-2 md:gap-4">
-                <div className="px-3 py-2 md:px-4 md:py-3 bg-bg-darker/50 border border-text-primary/30 text-text-primary/50 font-display text-base md:text-xl">
+                <div className={`px-3 py-2 md:px-4 md:py-3 font-display text-base md:text-xl ${
+                  index === 0
+                    ? "bg-accent border-2 border-accent text-bg-darker"
+                    : "bg-bg-darker/50 border border-text-primary/30 text-text-primary/50"
+                }`}>
                   {tier.price}€
                 </div>
                 {index < nextTiers.length - 1 && (
