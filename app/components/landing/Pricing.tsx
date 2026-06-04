@@ -12,7 +12,7 @@ const nextTiers = [
 export function Pricing() {
   // Tier actif actuel
   const currentPrice = 29;
-  const currentRemaining = 5;
+  const currentRemaining = 1;
 
   return (
     <section id="pricing" className="relative py-32 px-4 overflow-hidden">
@@ -69,7 +69,7 @@ export function Pricing() {
           <div className="mt-6 flex items-center justify-center gap-3">
             <span className="w-3 h-3 bg-accent rounded-full animate-pulse" />
             <span className="font-body text-lg text-text-primary">
-              <span className="text-accent font-bold">{currentRemaining}</span> places restantes
+              <span className="text-accent font-bold">{currentRemaining}</span> {currentRemaining === 1 ? "place restante" : "places restantes"}
             </span>
           </div>
 
