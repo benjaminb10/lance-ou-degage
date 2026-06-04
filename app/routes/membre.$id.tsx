@@ -180,7 +180,7 @@ function MemberProfile() {
         {/* Countdown */}
         {member.countdown_started_at && (
           <motion.div
-            className={`mt-6 p-8 border text-center ${
+            className={`mt-6 p-4 md:p-8 border text-center overflow-hidden ${
               isCountdownExpired
                 ? "bg-red-500/10 border-red-500/50"
                 : "bg-bg-dark border-accent/50"
@@ -197,25 +197,25 @@ function MemberProfile() {
             ) : (
               <>
                 <h2 className="font-display text-lg text-accent mb-4">TEMPS RESTANT</h2>
-                <div className="flex justify-center items-center gap-2 md:gap-4">
-                  <div className="text-center">
-                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-text-primary">{countdown.days}</div>
-                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">jours</div>
+                <div className="flex justify-center items-center gap-1 sm:gap-2 md:gap-3">
+                  <div className="text-center min-w-0">
+                    <div className="font-display text-2xl sm:text-3xl md:text-4xl text-text-primary">{countdown.days}</div>
+                    <div className="font-body text-[8px] sm:text-[10px] md:text-xs text-text-secondary uppercase mt-1">jours</div>
                   </div>
-                  <span className="font-display text-xl md:text-3xl text-accent">:</span>
-                  <div className="text-center">
-                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-text-primary">{String(countdown.hours).padStart(2, '0')}</div>
-                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">heures</div>
+                  <span className="font-display text-lg sm:text-xl md:text-2xl text-accent">:</span>
+                  <div className="text-center min-w-0">
+                    <div className="font-display text-2xl sm:text-3xl md:text-4xl text-text-primary">{String(countdown.hours).padStart(2, '0')}</div>
+                    <div className="font-body text-[8px] sm:text-[10px] md:text-xs text-text-secondary uppercase mt-1">heures</div>
                   </div>
-                  <span className="font-display text-xl md:text-3xl text-accent">:</span>
-                  <div className="text-center">
-                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-text-primary">{String(countdown.minutes).padStart(2, '0')}</div>
-                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">min</div>
+                  <span className="font-display text-lg sm:text-xl md:text-2xl text-accent">:</span>
+                  <div className="text-center min-w-0">
+                    <div className="font-display text-2xl sm:text-3xl md:text-4xl text-text-primary">{String(countdown.minutes).padStart(2, '0')}</div>
+                    <div className="font-body text-[8px] sm:text-[10px] md:text-xs text-text-secondary uppercase mt-1">min</div>
                   </div>
-                  <span className="font-display text-xl md:text-3xl text-accent animate-pulse">:</span>
-                  <div className="text-center">
-                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-accent">{String(countdown.seconds).padStart(2, '0')}</div>
-                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">sec</div>
+                  <span className="font-display text-lg sm:text-xl md:text-2xl text-accent animate-pulse">:</span>
+                  <div className="text-center min-w-0">
+                    <div className="font-display text-2xl sm:text-3xl md:text-4xl text-accent">{String(countdown.seconds).padStart(2, '0')}</div>
+                    <div className="font-body text-[8px] sm:text-[10px] md:text-xs text-text-secondary uppercase mt-1">sec</div>
                   </div>
                 </div>
               </>
