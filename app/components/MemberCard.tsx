@@ -17,13 +17,14 @@ export function formatMRR(mrr: number): string {
 
 export function MemberCard({ member, rank, delay = 0 }: MemberCardProps) {
   return (
-    <motion.div
-      className="bg-bg-darker/80 border border-text-secondary/20 p-4 md:p-6 flex items-center gap-4 md:gap-6 hover:border-accent/50 transition-all"
-      initial={{ opacity: 0, x: -30 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay }}
-    >
+    <a href={`/membre/${member.id}`}>
+      <motion.div
+        className="bg-bg-darker/80 border border-text-secondary/20 p-4 md:p-6 flex items-center gap-4 md:gap-6 hover:border-accent/50 hover:bg-bg-darker transition-all cursor-pointer"
+        initial={{ opacity: 0, x: -30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay }}
+      >
       {/* Rank */}
       <div className="font-display text-2xl md:text-3xl text-accent w-6 md:w-8 text-center flex-shrink-0">
         {rank}
@@ -87,6 +88,7 @@ export function MemberCard({ member, rank, delay = 0 }: MemberCardProps) {
           <Vehicle tier={member.tier} className="w-full h-full" />
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </a>
   );
 }

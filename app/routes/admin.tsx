@@ -142,6 +142,36 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     setTimeout(() => setCopiedId(null), 2000);
   }
 
+  async function startCountdown(member: Member) {
+    if (member.countdown_started_at) {
+      if (!confirm(`${member.name} a déjà un compteur en cours. Relancer ?`)) {
+        return;
+      }
+    }
+
+    const { error } = await supabase
+      .from("members")
+      .update({ countdown_started_at: new Date().toISOString() })
+      .eq("id", member.id);
+
+    if (error) {
+      console.error("Error starting countdown:", error);
+      alert("Erreur lors du lancement du compteur");
+    } else {
+      setMembers(members.map(m =>
+        m.id === member.id ? { ...m, countdown_started_at: new Date().toISOString() } : m
+      ));
+    }
+  }
+
+  function getDaysRemaining(startedAt: string): number {
+    const start = new Date(startedAt);
+    const end = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const now = new Date();
+    const diff = end.getTime() - now.getTime();
+    return Math.max(0, Math.ceil(diff / (24 * 60 * 60 * 1000)));
+  }
+
   useEffect(() => {
     fetchMembers();
   }, []);
@@ -405,11 +435,34 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                       </div>
                       <div className="font-body text-xs text-text-secondary">
                         {member.email} · Tier {member.tier} · {member.mrr}€ MRR
+                        {member.countdown_started_at && (
+                          <span className="ml-2 text-accent">
+                            · ⏱ {getDaysRemaining(member.countdown_started_at)}j restants
+                          </span>
+                        )}
                       </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                      <a
+                        href={`/membre/${member.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1 text-xs font-body border border-text-secondary/50 text-text-secondary hover:border-text-primary hover:text-text-primary transition-colors"
+                      >
+                        voir profil
+                      </a>
+                      <button
+                        onClick={() => startCountdown(member)}
+                        className={`px-3 py-1 text-xs font-body border transition-colors ${
+                          member.countdown_started_at
+                            ? "border-green-500/50 text-green-400 hover:bg-green-500 hover:text-white"
+                            : "border-yellow-500/50 text-yellow-400 hover:bg-yellow-500 hover:text-white"
+                        }`}
+                      >
+                        {member.countdown_started_at ? "relancer" : "lancer compteur"}
+                      </button>
                       {member.stripe_session_id && (
                         <button
                           onClick={() => copyOnboardingLink(member)}

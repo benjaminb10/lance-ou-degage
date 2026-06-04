@@ -13,6 +13,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MembreIdRouteImport } from './routes/membre.$id'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -34,18 +35,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MembreIdRoute = MembreIdRouteImport.update({
+  id: '/membre/$id',
+  path: '/membre/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/membre/$id': typeof MembreIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/membre/$id': typeof MembreIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/membre/$id': typeof MembreIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/leaderboard' | '/onboarding'
+  fullPaths: '/' | '/admin' | '/leaderboard' | '/onboarding' | '/membre/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/leaderboard' | '/onboarding'
-  id: '__root__' | '/' | '/admin' | '/leaderboard' | '/onboarding'
+  to: '/' | '/admin' | '/leaderboard' | '/onboarding' | '/membre/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/leaderboard'
+    | '/onboarding'
+    | '/membre/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +82,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
+  MembreIdRoute: typeof MembreIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/membre/$id': {
+      id: '/membre/$id'
+      path: '/membre/$id'
+      fullPath: '/membre/$id'
+      preLoaderRoute: typeof MembreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
+  MembreIdRoute: MembreIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

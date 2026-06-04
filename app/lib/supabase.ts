@@ -30,6 +30,7 @@ export interface Member {
   discord_invited: boolean;
   is_founder: boolean;
   visible: boolean;
+  countdown_started_at: string | null;
   projects?: Project[];
 }
 
