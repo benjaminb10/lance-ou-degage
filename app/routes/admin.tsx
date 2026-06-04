@@ -132,16 +132,31 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Member>>({});
   const [saving, setSaving] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  async function copyOnboardingLink(member: Member) {
+    if (!member.stripe_session_id) return;
+    const link = `https://lance-ou-degage.fr/onboarding?session_id=${member.stripe_session_id}`;
+    await navigator.clipboard.writeText(link);
+    setCopiedId(member.id);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
 
   useEffect(() => {
     fetchMembers();
   }, []);
 
   async function fetchMembers() {
+    // Debug: check current session
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log("Admin session:", session?.user?.email);
+
     const { data, error } = await supabase
       .from("members")
       .select("*, projects(*)")
       .order("created_at", { ascending: false });
+
+    console.log("Fetch members result:", { data, error });
 
     if (error) {
       console.error("Error fetching members:", error);
@@ -268,62 +283,78 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                   /* Edit mode */
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        value={editForm.name || ""}
-                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                        placeholder="Nom"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
-                      <input
-                        type="email"
-                        value={editForm.email || ""}
-                        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                        placeholder="Email"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
-                      <input
-                        type="text"
-                        value={editForm.whatsapp || ""}
-                        onChange={(e) => setEditForm({ ...editForm, whatsapp: e.target.value })}
-                        placeholder="WhatsApp"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
-                      <input
-                        type="text"
-                        value={editForm.bio || ""}
-                        onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                        placeholder="Bio"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
-                      <input
-                        type="number"
-                        value={editForm.tier || 0}
-                        onChange={(e) => setEditForm({ ...editForm, tier: parseInt(e.target.value) })}
-                        placeholder="Tier (0-8)"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
-                      <input
-                        type="number"
-                        value={editForm.mrr || 0}
-                        onChange={(e) => setEditForm({ ...editForm, mrr: parseInt(e.target.value) })}
-                        placeholder="MRR"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
-                      <input
-                        type="text"
-                        value={editForm.linkedin_url || ""}
-                        onChange={(e) => setEditForm({ ...editForm, linkedin_url: e.target.value })}
-                        placeholder="LinkedIn URL"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
-                      <input
-                        type="text"
-                        value={editForm.twitter_url || ""}
-                        onChange={(e) => setEditForm({ ...editForm, twitter_url: e.target.value })}
-                        placeholder="Twitter URL"
-                        className="bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                      />
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">Nom</label>
+                        <input
+                          type="text"
+                          value={editForm.name || ""}
+                          onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">Email</label>
+                        <input
+                          type="email"
+                          value={editForm.email || ""}
+                          onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">WhatsApp</label>
+                        <input
+                          type="text"
+                          value={editForm.whatsapp || ""}
+                          onChange={(e) => setEditForm({ ...editForm, whatsapp: e.target.value })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">Bio</label>
+                        <input
+                          type="text"
+                          value={editForm.bio || ""}
+                          onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">Tier (0-8)</label>
+                        <input
+                          type="number"
+                          value={editForm.tier || 0}
+                          onChange={(e) => setEditForm({ ...editForm, tier: parseInt(e.target.value) })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">MRR (€)</label>
+                        <input
+                          type="number"
+                          value={editForm.mrr || 0}
+                          onChange={(e) => setEditForm({ ...editForm, mrr: parseInt(e.target.value) })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">LinkedIn URL</label>
+                        <input
+                          type="text"
+                          value={editForm.linkedin_url || ""}
+                          onChange={(e) => setEditForm({ ...editForm, linkedin_url: e.target.value })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-body text-xs text-text-secondary mb-1">Twitter URL</label>
+                        <input
+                          type="text"
+                          value={editForm.twitter_url || ""}
+                          onChange={(e) => setEditForm({ ...editForm, twitter_url: e.target.value })}
+                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
+                        />
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -379,6 +410,14 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 flex-shrink-0">
+                      {member.stripe_session_id && (
+                        <button
+                          onClick={() => copyOnboardingLink(member)}
+                          className="px-3 py-1 text-xs font-body border border-blue-500/50 text-blue-400 hover:bg-blue-500 hover:text-white transition-colors"
+                        >
+                          {copiedId === member.id ? "copié!" : "renvoyer l'onboarding"}
+                        </button>
+                      )}
                       <button
                         onClick={() => toggleVisible(member)}
                         className={`px-3 py-1 text-xs font-body border transition-colors ${
