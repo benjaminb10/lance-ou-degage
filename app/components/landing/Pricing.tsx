@@ -113,23 +113,23 @@ export function Pricing() {
             Ensuite le prix monte:
           </p>
 
-          <div className="flex justify-center items-center gap-3 md:gap-4">
+          <div className="flex justify-center items-center gap-2 md:gap-4 flex-wrap">
             {/* Tier actuel (petit rappel) */}
-            <div className="px-4 py-3 bg-accent/20 border-2 border-accent text-accent font-display text-lg md:text-xl">
+            <div className="px-3 py-2 md:px-4 md:py-3 bg-accent/20 border-2 border-accent text-accent font-display text-base md:text-xl">
               29€ ✓
             </div>
 
             {/* Flèche */}
-            <span className="text-text-primary/60 text-xl">→</span>
+            <span className="text-text-primary/60 text-base md:text-xl">→</span>
 
             {/* Prochains tiers grisés */}
             {nextTiers.map((tier, index) => (
-              <div key={tier.price} className="flex items-center gap-3 md:gap-4">
-                <div className="px-4 py-3 bg-bg-darker/50 border border-text-primary/30 text-text-primary/50 font-display text-lg md:text-xl">
+              <div key={tier.price} className="flex items-center gap-2 md:gap-4">
+                <div className="px-3 py-2 md:px-4 md:py-3 bg-bg-darker/50 border border-text-primary/30 text-text-primary/50 font-display text-base md:text-xl">
                   {tier.price}€
                 </div>
                 {index < nextTiers.length - 1 && (
-                  <span className="text-text-primary/40 text-xl">→</span>
+                  <span className="text-text-primary/40 text-base md:text-xl">→</span>
                 )}
               </div>
             ))}
