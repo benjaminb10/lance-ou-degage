@@ -197,25 +197,25 @@ function MemberProfile() {
             ) : (
               <>
                 <h2 className="font-display text-lg text-accent mb-4">TEMPS RESTANT</h2>
-                <div className="flex justify-center items-center gap-4">
+                <div className="flex justify-center items-center gap-2 md:gap-4">
                   <div className="text-center">
-                    <div className="font-display text-5xl md:text-6xl text-text-primary">{countdown.days}</div>
-                    <div className="font-body text-xs text-text-secondary uppercase mt-1">jours</div>
+                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-text-primary">{countdown.days}</div>
+                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">jours</div>
                   </div>
-                  <span className="font-display text-3xl text-accent">:</span>
+                  <span className="font-display text-xl md:text-3xl text-accent">:</span>
                   <div className="text-center">
-                    <div className="font-display text-5xl md:text-6xl text-text-primary">{String(countdown.hours).padStart(2, '0')}</div>
-                    <div className="font-body text-xs text-text-secondary uppercase mt-1">heures</div>
+                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-text-primary">{String(countdown.hours).padStart(2, '0')}</div>
+                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">heures</div>
                   </div>
-                  <span className="font-display text-3xl text-accent">:</span>
+                  <span className="font-display text-xl md:text-3xl text-accent">:</span>
                   <div className="text-center">
-                    <div className="font-display text-5xl md:text-6xl text-text-primary">{String(countdown.minutes).padStart(2, '0')}</div>
-                    <div className="font-body text-xs text-text-secondary uppercase mt-1">min</div>
+                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-text-primary">{String(countdown.minutes).padStart(2, '0')}</div>
+                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">min</div>
                   </div>
-                  <span className="font-display text-3xl text-accent animate-pulse">:</span>
+                  <span className="font-display text-xl md:text-3xl text-accent animate-pulse">:</span>
                   <div className="text-center">
-                    <div className="font-display text-5xl md:text-6xl text-accent">{String(countdown.seconds).padStart(2, '0')}</div>
-                    <div className="font-body text-xs text-text-secondary uppercase mt-1">sec</div>
+                    <div className="font-display text-3xl md:text-5xl lg:text-6xl text-accent">{String(countdown.seconds).padStart(2, '0')}</div>
+                    <div className="font-body text-[10px] md:text-xs text-text-secondary uppercase mt-1">sec</div>
                   </div>
                 </div>
               </>
