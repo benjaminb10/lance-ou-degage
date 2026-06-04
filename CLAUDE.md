@@ -40,3 +40,9 @@ Tables:
 ## Credentials
 
 Les credentials sont dans `.claude-secrets` (gitignored).
+
+## Instructions pour Claude
+
+- **NE PAS commit/push automatiquement** : Toujours demander avant de commit et push
+- **Mode plan** : Quand le mode plan est actif, présenter le plan et attendre validation AVANT d'implémenter
+- **Demander confirmation** : Pour les changements significatifs, demander si le résultat convient avant de passer à la suite
