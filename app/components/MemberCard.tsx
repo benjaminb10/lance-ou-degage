@@ -26,7 +26,7 @@ export function MemberCard({ member, rank, delay = 0 }: MemberCardProps) {
         transition={{ delay }}
       >
       {/* Rank */}
-      <div className="font-display text-2xl md:text-3xl text-accent w-6 md:w-8 text-center flex-shrink-0">
+      <div className="font-display text-2xl md:text-3xl text-accent w-8 md:w-10 text-center flex-shrink-0">
         {rank}
       </div>
 
