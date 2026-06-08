@@ -1,6 +1,6 @@
 # Roadmap Lance ou Dégage
 
-> Dernière mise à jour : 8 juin 2026
+> Dernière mise à jour : 9 juin 2026
 > Utilisateurs actuels : 10
 
 ## Philosophie
@@ -25,14 +25,19 @@ Avec 10 utilisateurs, la priorité est :
 ### Gamification de base
 - [x] Système de tiers (véhicules : barque → yacht)
 - [x] Leaderboard classé par MRR
-- [x] Trophées/achievements (14 disponibles)
+- [x] Trophées/achievements (25 disponibles)
 - [x] Notifications live des trophées débloqués (homepage)
 - [x] Feed des derniers trophées
+- [x] Page `/trophees` - Liste tous les trophées avec membres qui les ont obtenus
+- [x] Trophées marketing (TikTok, X, Reddit, YouTube, LinkedIn)
+- [x] Trophées streak (3j, 7j, 14j, 30j)
 
 ### Technique
 - [x] Responsive mobile
 - [x] Countdown 30 jours par membre
 - [x] Édition profil (MRR, projets, bio, liens)
+- [x] Édition avatar en mode édition (upload Supabase Storage)
+- [x] Navbar responsive (icônes seules sur mobile)
 
 ---
 
@@ -50,11 +55,23 @@ Avec 10 utilisateurs, la priorité est :
   - Priorité : MOYENNE
 
 ### Journal de bord / Updates
-- [ ] **Posts d'updates** - Les membres partagent leur avancement
-  - Nouvelle table `updates` (member_id, content, created_at)
-  - Feed des updates sur `/feed` (remplacer ou compléter le feed trophées)
-  - Limiter à 1 update/jour pour éviter le spam
-  - Priorité : HAUTE (crée de l'engagement quotidien)
+- [x] **Posts d'updates** - Les membres partagent leur avancement
+  - Table `updates` (member_id, content, created_at)
+  - Feed mixte updates + trophées sur `/feed`
+  - Limité à 1 update/jour
+  - ✅ Fait le 9 juin 2026
+
+- [x] **Système de streak** - Jours consécutifs d'activité
+  - Colonnes `streak_count` et `last_update_at` sur members
+  - Trophées auto-débloqués : 3j, 7j, 14j, 30j (icônes flamme)
+  - Badge 🔥 affiché sur profil et feed
+  - ✅ Fait le 9 juin 2026
+
+- [x] **Email de rappel quotidien** - Notification à 18h
+  - pg_cron + Resend API
+  - Sujet personnalisé selon le streak
+  - Aperçu du feed inclus
+  - ✅ Fait le 9 juin 2026
 
 ### Quêtes & Milestones
 - [ ] **Nouveaux trophées orientés action** :
@@ -132,7 +149,7 @@ Avec 10 utilisateurs, la priorité est :
 ## Backlog (Idées à explorer)
 
 - [ ] Mode "spectateur" - Preview de la communauté sans payer
-- [ ] Streak counter - Jours consécutifs d'activité
+- [x] ~~Streak counter~~ - ✅ Fait le 9 juin 2026
 - [ ] Leaderboard par période (semaine, mois, all-time)
 - [ ] Comparaison de progression entre membres
 - [ ] Export des stats en image pour Twitter
@@ -145,8 +162,8 @@ Avec 10 utilisateurs, la priorité est :
 ## Prochaines actions immédiates
 
 1. **Badge "Dégagé"** - C'est le coeur du concept, sans ça pas de pression réelle
-2. **Posts d'updates** - Créer de l'engagement quotidien
-3. **Compteurs homepage** - Social proof pour les visiteurs
+2. ~~**Posts d'updates**~~ - ✅ Fait
+3. ~~**Compteurs homepage**~~ - ✅ Fait
 
 ---
 
@@ -161,11 +178,11 @@ Avec 10 utilisateurs, la priorité est :
 - Emails : Resend
 
 ### Tables Supabase
-- `members` - Profils des membres
+- `members` - Profils des membres (+ streak_count, last_update_at)
 - `projects` - Projets des membres
-- `achievements` - Liste des trophées
+- `achievements` - Liste des trophées (25 disponibles)
 - `member_achievements` - Trophées débloqués
+- `updates` - Journal de bord des membres
 
 ### Tables à créer
-- `updates` - Journal de bord des membres
 - `votes` - Votes pour projet de la semaine (futur)

@@ -14,22 +14,37 @@ Site communautaire pour makers qui lancent un produit en 30 jours.
 
 ```
 app/
-├── routes/          # Pages (TanStack Router file-based routing)
-│   ├── index.tsx    # Landing page
-│   ├── onboarding.tsx # Post-payment onboarding form
-│   └── admin.tsx    # Admin dashboard (auth required)
-├── components/      # React components
-│   ├── landing/     # Landing page components
-│   └── ui/          # Reusable UI components
+├── routes/              # Pages (TanStack Router file-based routing)
+│   ├── index.tsx        # Landing page
+│   ├── leaderboard.tsx  # Classement
+│   ├── feed.tsx         # Feed updates + trophées
+│   ├── trophees.tsx     # Liste des trophées
+│   ├── membre.$id.tsx   # Profil membre (journal, projets, trophées)
+│   ├── login.tsx        # Magic link login
+│   ├── onboarding.tsx   # Formulaire post-paiement
+│   └── admin.tsx        # Dashboard admin
+├── components/
+│   ├── landing/         # Landing page components
+│   ├── AchievementIcons.tsx  # Icônes pixel art des trophées
+│   ├── Header.tsx       # Navbar responsive
+│   └── ui/              # Reusable UI components
 └── lib/
-    └── supabase.ts  # Supabase client + types
+    ├── supabase.ts      # Supabase client + types
+    ├── auth.ts          # Auth hooks (useAuth)
+    └── streak.ts        # Logique streak + déblocage trophées
 ```
 
 ## Database (Supabase)
 
 Tables:
-- `members` - Membres de la communauté
+- `members` - Membres (+ streak_count, last_update_at, auth_id)
 - `projects` - Projets des membres
+- `achievements` - Liste des 25 trophées disponibles
+- `member_achievements` - Trophées débloqués par membre
+- `updates` - Journal de bord (posts quotidiens)
+
+Storage:
+- `avatars` - Photos de profil des membres
 
 ## Admin
 
@@ -149,6 +164,15 @@ GRANT DELETE ON ma_table TO authenticated;
 
 - `/` : Landing page
 - `/leaderboard` : Classement public
-- `/membre/$id` : Profil public avec countdown 30 jours
+- `/feed` : Feed mixte (updates + trophées)
+- `/trophees` : Liste des trophées avec membres
+- `/membre/$id` : Profil public avec countdown, journal, trophées
+- `/login` : Connexion magic link
 - `/onboarding?session_id=xxx` : Formulaire post-paiement
 - `/admin` : Dashboard admin (auth Supabase)
+
+### Cron Jobs (pg_cron)
+
+- **Daily reminder** : 16:00 UTC (18h Paris) - Email de rappel aux membres qui n'ont pas posté
+  - Fonction : `send_daily_reminders()`
+  - Utilise pg_net pour appeler Resend API
