@@ -55,6 +55,9 @@ function TropheesPage() {
       members: membersByAchievement[achievement.id] || [],
     }));
 
+    // Sort by number of members (most first)
+    achievementsWithMembers.sort((a, b) => b.members.length - a.members.length);
+
     setAchievements(achievementsWithMembers);
     setLoading(false);
   }
