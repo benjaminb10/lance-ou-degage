@@ -256,13 +256,21 @@ export function Header() {
               )}
             </div>
           ) : (
-            /* Not connected: Login button */
-            <Link
-              to="/login"
-              className="px-3 md:px-4 py-1.5 border border-accent text-accent font-body text-xs md:text-sm hover:bg-accent hover:text-bg-darker transition-colors"
-            >
-              Connexion
-            </Link>
+            /* Not connected: CTA + Login */
+            <div className="flex items-center gap-2 md:gap-3">
+              <a
+                href="#pricing"
+                className="px-3 md:px-4 py-1.5 bg-accent text-bg-darker font-body text-xs md:text-sm font-semibold hover:bg-accent/90 transition-colors"
+              >
+                Rejoindre
+              </a>
+              <Link
+                to="/login"
+                className="hidden md:inline-block px-3 md:px-4 py-1.5 border border-text-secondary/30 text-text-secondary font-body text-xs md:text-sm hover:border-accent hover:text-accent transition-colors"
+              >
+                Connexion
+              </Link>
+            </div>
           )}
         </nav>
       </div>

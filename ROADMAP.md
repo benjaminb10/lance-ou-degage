@@ -25,7 +25,7 @@ Avec 10 utilisateurs, la priorité est :
 ### Gamification de base
 - [x] Système de tiers (véhicules : barque → yacht)
 - [x] Leaderboard classé par MRR
-- [x] Trophées/achievements (25 disponibles)
+- [x] Trophées/achievements (35 disponibles)
 - [x] Notifications live des trophées débloqués (homepage)
 - [x] Feed des derniers trophées
 - [x] Page `/trophees` - Liste tous les trophées avec membres qui les ont obtenus
@@ -141,8 +141,9 @@ Avec 10 utilisateurs, la priorité est :
   - Complexe à implémenter
   - Priorité : BASSE
 
-- [ ] **Notifications Discord** - Bot qui poste les nouveaux trophées
-  - Priorité : MOYENNE
+- [x] **Notifications Discord** - Bot qui poste les nouveaux trophées
+  - Trigger PostgreSQL + pg_net → webhook Discord
+  - ✅ Fait le 9 juin 2026
 
 ---
 
