@@ -29,6 +29,8 @@ export interface Member {
   whatsapp: string | null;
   linkedin_url: string | null;
   twitter_url: string | null;
+  tiktok_url: string | null;
+  instagram_url: string | null;
   avatar_url: string | null;
   bio: string | null;
   tier: number;
