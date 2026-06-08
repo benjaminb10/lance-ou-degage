@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { supabase, type Member, type Achievement, type MemberAchievement, type Project, type Update } from "~/lib/supabase";
@@ -51,6 +51,8 @@ function MemberProfile() {
   const [activeTab, setActiveTab] = useState<"projets" | "journal" | "trophees">("projets");
   const [editingUpdateId, setEditingUpdateId] = useState<string | null>(null);
   const [editingUpdateContent, setEditingUpdateContent] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Check if current user is the owner of this profile
   const isOwner = user && member?.auth_id === user.id;
@@ -329,6 +331,46 @@ function MemberProfile() {
     setEditProjects((prev) => prev.filter((_, i) => i !== index));
   }
 
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!member || !e.target.files || e.target.files.length === 0) return;
+
+    const file = e.target.files[0];
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${member.id}-${Date.now()}.${fileExt}`;
+
+    setUploadingAvatar(true);
+
+    // Upload to Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      console.error('Error uploading avatar:', uploadError);
+      setUploadingAvatar(false);
+      return;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(fileName);
+
+    // Update member avatar_url
+    const { error: updateError } = await supabase
+      .from('members')
+      .update({ avatar_url: publicUrl })
+      .eq('id', member.id);
+
+    if (updateError) {
+      console.error('Error updating avatar URL:', updateError);
+    } else {
+      setMember((prev) => prev ? { ...prev, avatar_url: publicUrl } : null);
+    }
+
+    setUploadingAvatar(false);
+  }
+
   async function handleFinishEditing() {
     await saveMrr();
     await saveProjects();
@@ -390,16 +432,40 @@ function MemberProfile() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
+          {/* Hidden file input for avatar */}
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+          />
+
           {/* Mobile layout */}
           <div className="md:hidden">
             <div className="flex items-center gap-4 mb-4">
               {/* Avatar */}
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0">
+              <div
+                className={`relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0 ${isOwner && isEditing ? 'cursor-pointer' : ''}`}
+                onClick={() => isOwner && isEditing && avatarInputRef.current?.click()}
+              >
                 {member.avatar_url ? (
                   <img src={member.avatar_url} alt={member.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-accent font-display text-xl">
                     {member.name.charAt(0)}
+                  </div>
+                )}
+                {/* Edit overlay */}
+                {isOwner && isEditing && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    {uploadingAvatar ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    )}
                   </div>
                 )}
               </div>
@@ -450,7 +516,10 @@ function MemberProfile() {
           {/* Desktop layout */}
           <div className="hidden md:flex items-start gap-4">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0">
+            <div
+              className={`relative w-20 h-20 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0 ${isOwner && isEditing ? 'cursor-pointer' : ''}`}
+              onClick={() => isOwner && isEditing && avatarInputRef.current?.click()}
+            >
               {member.avatar_url ? (
                 <img
                   src={member.avatar_url}
@@ -460,6 +529,18 @@ function MemberProfile() {
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-accent font-display text-2xl">
                   {member.name.charAt(0)}
+                </div>
+              )}
+              {/* Edit overlay */}
+              {isOwner && isEditing && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  {uploadingAvatar ? (
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  )}
                 </div>
               )}
             </div>
