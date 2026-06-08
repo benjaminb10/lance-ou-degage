@@ -148,7 +148,7 @@ function TropheesPage() {
                           )}
                           {/* Count label */}
                           <span className="ml-auto font-body text-xs text-text-secondary">
-                            {achievement.members.length} {achievement.members.length === 1 ? 'membre' : 'membres'}
+                            obtenu par {achievement.members.length} {achievement.members.length === 1 ? 'membre' : 'membres'}
                           </span>
                         </div>
                       </div>
