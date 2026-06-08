@@ -130,7 +130,7 @@ function OnboardingPage() {
   }
 
   if (step === "discord") {
-    return <DiscordInviteStep />;
+    return <DiscordInviteStep email={formData.email} />;
   }
 
   return (
@@ -295,7 +295,30 @@ function OnboardingPage() {
   );
 }
 
-function DiscordInviteStep() {
+function DiscordInviteStep({ email }: { email: string }) {
+  const [sendingMagicLink, setSendingMagicLink] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [magicLinkError, setMagicLinkError] = useState("");
+
+  async function handleCreateAccount() {
+    setSendingMagicLink(true);
+    setMagicLinkError("");
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setMagicLinkError("Erreur lors de l'envoi. Réessaie plus tard.");
+    } else {
+      setMagicLinkSent(true);
+    }
+    setSendingMagicLink(false);
+  }
+
   return (
     <main className="min-h-screen bg-bg-darker flex items-center justify-center p-4">
       <motion.div
@@ -316,23 +339,66 @@ function DiscordInviteStep() {
           t'es dedans.
         </h1>
         <p className="font-body text-text-secondary mb-8">
-          rejoins le Discord pour commencer ton premier challenge.
+          2 étapes pour commencer :
         </p>
 
-        <a
-          href={DISCORD_INVITE_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <Button variant="primary" size="lg" className="w-full">
-            rejoindre le discord
-          </Button>
-        </a>
+        {/* Step 1: Discord */}
+        <div className="mb-6 p-4 border border-text-secondary/20 bg-bg-dark text-left">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="w-8 h-8 rounded-full bg-accent/20 border border-accent text-accent font-display flex items-center justify-center">1</span>
+            <span className="font-display text-text-primary">Rejoins le Discord</span>
+          </div>
+          <p className="font-body text-sm text-text-secondary mb-4 ml-11">
+            C'est là que tout se passe : challenges, feedback, entraide.
+          </p>
+          <a
+            href={DISCORD_INVITE_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block ml-11"
+          >
+            <Button variant="primary" size="sm">
+              rejoindre le discord
+            </Button>
+          </a>
+        </div>
+
+        {/* Step 2: Create account */}
+        <div className="p-4 border border-text-secondary/20 bg-bg-dark text-left">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="w-8 h-8 rounded-full bg-text-secondary/20 border border-text-secondary/50 text-text-secondary font-display flex items-center justify-center">2</span>
+            <span className="font-display text-text-primary">Crée ton compte</span>
+          </div>
+          <p className="font-body text-sm text-text-secondary mb-4 ml-11">
+            Pour accéder à ton espace et suivre ta progression.
+          </p>
+
+          {magicLinkSent ? (
+            <div className="ml-11 p-3 bg-accent/10 border border-accent text-accent font-body text-sm">
+              Lien envoyé à {email} ! Check tes mails.
+            </div>
+          ) : (
+            <div className="ml-11">
+              {magicLinkError && (
+                <div className="mb-3 p-2 bg-red-500/10 border border-red-500 text-red-400 font-body text-xs">
+                  {magicLinkError}
+                </div>
+              )}
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleCreateAccount}
+                disabled={sendingMagicLink}
+              >
+                {sendingMagicLink ? "envoi..." : "créer mon compte"}
+              </Button>
+            </div>
+          )}
+        </div>
 
         <a
           href="/leaderboard"
-          className="block mt-6 text-accent hover:text-accent-bright font-body transition-colors"
+          className="block mt-8 text-text-secondary hover:text-accent font-body text-sm transition-colors"
         >
           voir le leaderboard →
         </a>

@@ -35,6 +35,18 @@ export function Footer() {
           </div>
           <div className="flex gap-6">
             <a
+              href="/leaderboard"
+              className="font-body text-sm text-text-secondary hover:text-accent transition-colors"
+            >
+              Leaderboard
+            </a>
+            <a
+              href="/feed"
+              className="font-body text-sm text-text-secondary hover:text-accent transition-colors"
+            >
+              Feed
+            </a>
+            <a
               href="#faq"
               className="font-body text-sm text-text-secondary hover:text-accent transition-colors"
             >
@@ -45,12 +57,6 @@ export function Footer() {
               className="font-body text-sm text-text-secondary hover:text-accent transition-colors"
             >
               Pricing
-            </a>
-            <a
-              href="#route"
-              className="font-body text-sm text-text-secondary hover:text-accent transition-colors"
-            >
-              La Route
             </a>
           </div>
         </div>

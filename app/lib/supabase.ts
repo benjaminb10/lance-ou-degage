@@ -31,7 +31,9 @@ export interface Member {
   is_founder: boolean;
   visible: boolean;
   countdown_started_at: string | null;
+  auth_id: string | null;
   projects?: Project[];
+  member_achievements?: MemberAchievement[];
 }
 
 export interface Project {
@@ -41,4 +43,21 @@ export interface Project {
   url: string | null;
   description: string | null;
   mrr: number;
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  position: number;
+}
+
+export interface MemberAchievement {
+  member_id: string;
+  achievement_id: string;
+  unlocked_at: string;
+  // Joined data
+  achievement?: Achievement;
+  member?: Member;
 }

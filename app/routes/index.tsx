@@ -8,6 +8,7 @@ import { SocialProof } from "~/components/landing/SocialProof";
 import { Pricing } from "~/components/landing/Pricing";
 import { FAQ } from "~/components/landing/FAQ";
 import { Footer } from "~/components/landing/Footer";
+import { LiveTrophyNotification } from "~/components/landing/LiveTrophyNotification";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -25,6 +26,7 @@ function LandingPage() {
       <Pricing />
       <FAQ />
       <Footer />
+      <LiveTrophyNotification />
     </main>
   );
 }

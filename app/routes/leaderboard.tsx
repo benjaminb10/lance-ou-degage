@@ -20,7 +20,8 @@ function LeaderboardPage() {
         .select(
           `
           *,
-          projects(*)
+          projects(*),
+          member_achievements(achievement_id)
         `
         )
         .eq("onboarding_completed", true)

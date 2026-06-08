@@ -92,3 +92,113 @@ FROM members WHERE name = 'Benjamin Benoudis';
 INSERT INTO projects (member_id, name, url)
 SELECT id, 'LaPause.app', 'https://www.lapause.app'
 FROM members WHERE name = 'Alexandre Sarfati';
+
+-- =====================================================
+-- MIGRATION: Add auth_id and achievements system
+-- =====================================================
+
+-- Add auth_id to link members to Supabase Auth
+ALTER TABLE members ADD COLUMN auth_id UUID REFERENCES auth.users(id);
+CREATE UNIQUE INDEX idx_members_auth_id ON members(auth_id);
+
+-- Add countdown_started_at if not exists (for 30-day challenge)
+ALTER TABLE members ADD COLUMN IF NOT EXISTS countdown_started_at TIMESTAMP WITH TIME ZONE;
+
+-- Achievements table (available trophies)
+CREATE TABLE achievements (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  icon TEXT,
+  position INTEGER DEFAULT 0
+);
+
+-- Member achievements (unlocked trophies)
+CREATE TABLE member_achievements (
+  member_id UUID REFERENCES members(id) ON DELETE CASCADE,
+  achievement_id TEXT REFERENCES achievements(id),
+  unlocked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  PRIMARY KEY (member_id, achievement_id)
+);
+
+-- Enable RLS on new tables
+ALTER TABLE achievements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE member_achievements ENABLE ROW LEVEL SECURITY;
+
+-- Achievements are public (everyone can see the list)
+CREATE POLICY "Achievements are public"
+  ON achievements FOR SELECT
+  USING (true);
+
+-- Member achievements visible if member is public
+CREATE POLICY "Member achievements visible if member public"
+  ON member_achievements FOR SELECT
+  USING (
+    member_id IN (SELECT id FROM members WHERE onboarding_completed = true)
+  );
+
+-- Members can manage their own achievements (INSERT/DELETE)
+CREATE POLICY "Members can insert own achievements"
+  ON member_achievements FOR INSERT
+  WITH CHECK (
+    member_id IN (SELECT id FROM members WHERE auth_id = auth.uid())
+  );
+
+CREATE POLICY "Members can delete own achievements"
+  ON member_achievements FOR DELETE
+  USING (
+    member_id IN (SELECT id FROM members WHERE auth_id = auth.uid())
+  );
+
+-- Members can update their own profile
+CREATE POLICY "Members can update own profile"
+  ON members FOR UPDATE
+  USING (auth_id = auth.uid())
+  WITH CHECK (auth_id = auth.uid());
+
+-- Index for feed queries
+CREATE INDEX idx_member_achievements_unlocked ON member_achievements(unlocked_at DESC);
+
+-- =====================================================
+-- SEED: Insert achievements (trophies)
+-- =====================================================
+
+INSERT INTO achievements (id, name, description, icon, position) VALUES
+  ('domain', 'Nom de domaine', 'Tu as acheté un nom de domaine', 'domain', 1),
+  ('landing', 'Landing page', 'Ta landing page est en ligne', 'landing', 2),
+  ('mvp', 'MVP prêt', 'Ton MVP est fonctionnel', 'mvp', 3),
+  ('payment', 'Paiement câblé', 'Stripe/paiement en place', 'payment', 4),
+  ('first_post', 'Premier post', 'Tu as posté sur les réseaux', 'first_post', 5),
+  ('first_user', 'Premier utilisateur', 'Quelqu''un utilise ton produit', 'first_user', 6),
+  ('first_euro', 'Premier euro', 'Tu as gagné ton premier euro', 'first_euro', 7),
+  ('ten_customers', '10 clients', 'Tu as 10 clients payants', 'ten_customers', 8),
+  ('hundred_mrr', '100€ MRR', 'Tu génères 100€/mois', 'hundred_mrr', 9),
+  ('first_review', 'Premier témoignage', 'Un client t''a laissé un avis', 'first_review', 10),
+  ('fifty_customers', '50 clients', 'Tu as 50 clients payants', 'fifty_customers', 11),
+  ('five_hundred_mrr', '500€ MRR', 'Tu génères 500€/mois', 'five_hundred_mrr', 12),
+  ('newsletter', 'Newsletter', 'Tu as lancé ta newsletter', 'newsletter', 13),
+  ('first_refund', 'Premier refund', 'Tu as géré ton premier remboursement', 'first_refund', 14),
+  ('hundred_customers', '100 clients', 'Tu as 100 clients payants', 'hundred_customers', 15),
+  ('thousand_mrr', '1000€ MRR', 'Tu génères 1000€/mois', 'thousand_mrr', 16),
+  ('product_hunt', 'Product Hunt', 'Tu as lancé sur Product Hunt', 'product_hunt', 17),
+  ('first_affiliate', 'Premier affilié', 'Quelqu''un te recommande', 'first_affiliate', 18),
+  ('five_k_mrr', '5000€ MRR', 'Tu génères 5000€/mois', 'five_k_mrr', 19),
+  ('ten_k_mrr', '10000€ MRR', 'Tu génères 10000€/mois', 'ten_k_mrr', 20);
+
+-- =====================================================
+-- MIGRATION: Add new achievements (run this to update existing DB)
+-- =====================================================
+
+INSERT INTO achievements (id, name, description, icon, position) VALUES
+  ('first_review', 'Premier témoignage', 'Un client t''a laissé un avis', 'first_review', 10),
+  ('fifty_customers', '50 clients', 'Tu as 50 clients payants', 'fifty_customers', 11),
+  ('five_hundred_mrr', '500€ MRR', 'Tu génères 500€/mois', 'five_hundred_mrr', 12),
+  ('newsletter', 'Newsletter', 'Tu as lancé ta newsletter', 'newsletter', 13),
+  ('first_refund', 'Premier refund', 'Tu as géré ton premier remboursement', 'first_refund', 14),
+  ('hundred_customers', '100 clients', 'Tu as 100 clients payants', 'hundred_customers', 15),
+  ('thousand_mrr', '1000€ MRR', 'Tu génères 1000€/mois', 'thousand_mrr', 16),
+  ('product_hunt', 'Product Hunt', 'Tu as lancé sur Product Hunt', 'product_hunt', 17),
+  ('first_affiliate', 'Premier affilié', 'Quelqu''un te recommande', 'first_affiliate', 18),
+  ('five_k_mrr', '5000€ MRR', 'Tu génères 5000€/mois', 'five_k_mrr', 19),
+  ('ten_k_mrr', '10000€ MRR', 'Tu génères 10000€/mois', 'ten_k_mrr', 20)
+ON CONFLICT (id) DO NOTHING;
