@@ -902,48 +902,99 @@ function MemberProfile() {
                     Coche les étapes que tu as accomplies. Ton tier monte avec chaque trophée !
                   </p>
                   <div className="space-y-2">
-                    {achievements.map((achievement) => {
-                      const isUnlocked = memberAchievements.some((ma) => ma.achievement_id === achievement.id);
-                      return (
-                        <button
-                          key={achievement.id}
-                          onClick={() => toggleAchievement(achievement.id)}
-                          className={`w-full flex items-center gap-4 p-3 border transition-all ${
-                            isUnlocked
-                              ? "bg-accent/10 border-accent"
-                              : "bg-bg-dark border-text-secondary/20 hover:border-text-secondary/40"
-                          }`}
-                        >
-                          <div className="w-8 h-8 flex-shrink-0">
-                            <AchievementIcon
-                              achievementId={achievement.id}
-                              className="w-full h-full"
-                              unlocked={isUnlocked}
-                            />
-                          </div>
-                          <div className="flex-1 text-left">
-                            <div className={`font-display text-sm ${isUnlocked ? "text-accent" : "text-text-primary"}`}>
-                              {achievement.name}
-                            </div>
-                            <div className="font-body text-xs text-text-secondary">
-                              {achievement.description}
-                            </div>
-                          </div>
-                          <div
-                            className={`w-5 h-5 border-2 flex items-center justify-center flex-shrink-0 ${
-                              isUnlocked ? "bg-accent border-accent" : "border-text-secondary/50"
+                    {achievements
+                      .filter((a) => !a.id.startsWith("streak_"))
+                      .map((achievement) => {
+                        const isUnlocked = memberAchievements.some((ma) => ma.achievement_id === achievement.id);
+                        return (
+                          <button
+                            key={achievement.id}
+                            onClick={() => toggleAchievement(achievement.id)}
+                            className={`w-full flex items-center gap-4 p-3 border transition-all ${
+                              isUnlocked
+                                ? "bg-accent/10 border-accent"
+                                : "bg-bg-dark border-text-secondary/20 hover:border-text-secondary/40"
                             }`}
                           >
-                            {isUnlocked && (
-                              <svg className="w-3 h-3 text-bg-darker" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
+                            <div className="w-8 h-8 flex-shrink-0">
+                              <AchievementIcon
+                                achievementId={achievement.id}
+                                className="w-full h-full"
+                                unlocked={isUnlocked}
+                              />
+                            </div>
+                            <div className="flex-1 text-left">
+                              <div className={`font-display text-sm ${isUnlocked ? "text-accent" : "text-text-primary"}`}>
+                                {achievement.name}
+                              </div>
+                              <div className="font-body text-xs text-text-secondary">
+                                {achievement.description}
+                              </div>
+                            </div>
+                            <div
+                              className={`w-5 h-5 border-2 flex items-center justify-center flex-shrink-0 ${
+                                isUnlocked ? "bg-accent border-accent" : "border-text-secondary/50"
+                              }`}
+                            >
+                              {isUnlocked && (
+                                <svg className="w-3 h-3 text-bg-darker" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
                   </div>
+
+                  {/* Streak achievements (automatic) */}
+                  {achievements.some((a) => a.id.startsWith("streak_")) && (
+                    <div className="mt-6 pt-4 border-t border-text-secondary/20">
+                      <p className="font-body text-xs text-text-secondary mb-3">
+                        Trophées automatiques (basés sur ton streak)
+                      </p>
+                      <div className="space-y-2">
+                        {achievements
+                          .filter((a) => a.id.startsWith("streak_"))
+                          .map((achievement) => {
+                            const isUnlocked = memberAchievements.some((ma) => ma.achievement_id === achievement.id);
+                            return (
+                              <div
+                                key={achievement.id}
+                                className={`w-full flex items-center gap-4 p-3 border ${
+                                  isUnlocked
+                                    ? "bg-orange-400/10 border-orange-400/50"
+                                    : "bg-bg-dark border-text-secondary/10 opacity-50"
+                                }`}
+                              >
+                                <div className="w-8 h-8 flex-shrink-0">
+                                  <AchievementIcon
+                                    achievementId={achievement.id}
+                                    className="w-full h-full"
+                                    unlocked={isUnlocked}
+                                  />
+                                </div>
+                                <div className="flex-1 text-left">
+                                  <div className={`font-display text-sm ${isUnlocked ? "text-orange-400" : "text-text-secondary"}`}>
+                                    {achievement.name}
+                                  </div>
+                                  <div className="font-body text-xs text-text-secondary">
+                                    {achievement.description}
+                                  </div>
+                                </div>
+                                {isUnlocked ? (
+                                  <span className="text-orange-400 text-lg">🔥</span>
+                                ) : (
+                                  <svg className="w-5 h-5 text-text-secondary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                  </svg>
+                                )}
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 // View mode: compact grid

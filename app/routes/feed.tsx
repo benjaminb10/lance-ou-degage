@@ -146,9 +146,9 @@ function FeedPage() {
                 transition={{ delay: index * 0.03 }}
               >
                 {item.type === "achievement" ? (
-                  // Achievement item
+                  // Achievement item - trophy icon on left
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 flex-shrink-0">
+                    <div className="w-12 h-12 flex-shrink-0">
                       <AchievementIcon
                         achievementId={item.achievement.id}
                         className="w-full h-full"
@@ -156,8 +156,8 @@ function FeedPage() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full overflow-hidden border border-text-secondary/30 bg-bg-darker flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="w-6 h-6 rounded-full overflow-hidden border border-text-secondary/30 bg-bg-darker flex-shrink-0">
                           {item.member.avatar_url ? (
                             <img
                               src={item.member.avatar_url}
@@ -165,24 +165,24 @@ function FeedPage() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-text-secondary font-display text-sm">
+                            <div className="w-full h-full flex items-center justify-center text-text-secondary font-display text-xs">
                               {item.member.name.charAt(0)}
                             </div>
                           )}
                         </div>
                         <span className="font-display text-text-primary">{item.member.name}</span>
+                        <span className="font-body text-xs text-text-secondary">
+                          · {formatTimeAgo(item.timestamp)}
+                        </span>
                       </div>
-                      <div className="font-body text-sm text-text-primary mt-1">
+                      <div className="font-body text-sm text-text-secondary mt-1">
                         a débloqué <span className="font-display text-accent">{item.achievement.name}</span>
-                      </div>
-                      <div className="font-body text-xs text-text-secondary mt-1">
-                        {formatTimeAgo(item.timestamp)}
                       </div>
                     </div>
                   </div>
                 ) : (
-                  // Update item
-                  <div className="flex items-start gap-4">
+                  // Update item - avatar on left
+                  <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full overflow-hidden border border-text-secondary/30 bg-bg-darker flex-shrink-0">
                       {item.member.avatar_url ? (
                         <img
@@ -197,7 +197,7 @@ function FeedPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-display text-text-primary">{item.member.name}</span>
                         {item.member.streak_count > 0 && (
                           <span className="text-sm text-orange-400">🔥{item.member.streak_count}</span>
@@ -205,6 +205,9 @@ function FeedPage() {
                         <span className="font-body text-xs text-text-secondary">
                           · {formatTimeAgo(item.timestamp)}
                         </span>
+                      </div>
+                      <div className="font-body text-sm text-text-secondary mt-1">
+                        raconte sa journée
                       </div>
                       <p className="font-body text-sm text-text-primary mt-2 whitespace-pre-wrap">{item.content}</p>
                     </div>
