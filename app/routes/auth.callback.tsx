@@ -19,7 +19,21 @@ function AuthCallbackPage() {
 
   async function handleCallback() {
     try {
-      // Get the session from URL (Supabase handles this automatically)
+      // Check if there's a hash with tokens (magic link format)
+      const hash = window.location.hash;
+      if (hash && hash.includes("access_token")) {
+        // Extract tokens from hash and set session
+        const { data, error: hashError } = await supabase.auth.getSession();
+
+        if (hashError) {
+          console.error("Hash session error:", hashError);
+        }
+
+        // Give Supabase time to process the hash
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      // Get the session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
       if (sessionError) {
@@ -28,11 +42,11 @@ function AuthCallbackPage() {
 
       if (!session?.user) {
         // Wait a bit and try again - sometimes the session takes a moment
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1500));
         const { data: { session: retrySession } } = await supabase.auth.getSession();
 
         if (!retrySession?.user) {
-          throw new Error("Session invalide. Le lien a peut-etre expire.");
+          throw new Error("Session invalide. Le lien a peut-être expiré.");
         }
 
         await processSession(retrySession.user.id, retrySession.user.email!);
