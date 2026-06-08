@@ -744,6 +744,285 @@ export function LinkedInIcon({ className = "", unlocked = true }: IconProps) {
   );
 }
 
+// Trophée Viral - Premier Hater (visage en colère)
+export function FirstHaterIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Fond rouge */}
+      <rect x="8" y="4" width="16" height="2" fill="#e74c3c" />
+      <rect x="6" y="6" width="20" height="2" fill="#e74c3c" />
+      <rect x="4" y="8" width="24" height="16" fill="#e74c3c" />
+      <rect x="6" y="24" width="20" height="2" fill="#e74c3c" />
+      <rect x="8" y="26" width="16" height="2" fill="#e74c3c" />
+      {/* Sourcils en colère */}
+      <rect x="6" y="10" width="6" height="2" fill="#2c2c2c" style={{ transform: "rotate(-15deg)", transformOrigin: "9px 11px" }} />
+      <rect x="20" y="10" width="6" height="2" fill="#2c2c2c" style={{ transform: "rotate(15deg)", transformOrigin: "23px 11px" }} />
+      {/* Yeux */}
+      <rect x="8" y="14" width="4" height="4" fill="#2c2c2c" />
+      <rect x="20" y="14" width="4" height="4" fill="#2c2c2c" />
+      {/* Bouche en colère */}
+      <rect x="10" y="22" width="12" height="2" fill="#2c2c2c" />
+      <rect x="8" y="20" width="2" height="2" fill="#2c2c2c" />
+      <rect x="22" y="20" width="2" height="2" fill="#2c2c2c" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Nuit Blanche (lune et café)
+export function NuitBlancheIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Fond nuit */}
+      <rect x="0" y="0" width="32" height="32" fill="#1a1a2e" />
+      {/* Lune */}
+      <rect x="4" y="4" width="12" height="2" fill="#f1c40f" />
+      <rect x="2" y="6" width="14" height="2" fill="#f1c40f" />
+      <rect x="2" y="8" width="12" height="6" fill="#f1c40f" />
+      <rect x="4" y="14" width="10" height="2" fill="#f1c40f" />
+      {/* Étoiles */}
+      <rect x="22" y="4" width="2" height="2" fill="#ffffff" />
+      <rect x="26" y="10" width="2" height="2" fill="#ffffff" />
+      <rect x="20" y="8" width="2" height="2" fill="#ffffff" />
+      {/* Tasse de café */}
+      <rect x="10" y="20" width="12" height="2" fill="#8B4513" />
+      <rect x="8" y="22" width="16" height="6" fill="#8B4513" />
+      <rect x="10" y="28" width="12" height="2" fill="#8B4513" />
+      {/* Anse */}
+      <rect x="24" y="22" width="2" height="4" fill="#8B4513" />
+      <rect x="26" y="24" width="2" height="2" fill="#8B4513" />
+      {/* Vapeur */}
+      <rect x="12" y="16" width="2" height="2" fill="#cccccc" />
+      <rect x="16" y="18" width="2" height="2" fill="#cccccc" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Bug en Prod (insecte)
+export function BugProdIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Corps du bug */}
+      <rect x="12" y="8" width="8" height="4" fill="#e74c3c" />
+      <rect x="10" y="12" width="12" height="8" fill="#e74c3c" />
+      <rect x="12" y="20" width="8" height="4" fill="#e74c3c" />
+      {/* Tête */}
+      <rect x="13" y="4" width="6" height="4" fill="#2c2c2c" />
+      {/* Antennes */}
+      <rect x="11" y="2" width="2" height="4" fill="#2c2c2c" />
+      <rect x="19" y="2" width="2" height="4" fill="#2c2c2c" />
+      {/* Pattes */}
+      <rect x="6" y="12" width="4" height="2" fill="#2c2c2c" />
+      <rect x="22" y="12" width="4" height="2" fill="#2c2c2c" />
+      <rect x="6" y="16" width="4" height="2" fill="#2c2c2c" />
+      <rect x="22" y="16" width="4" height="2" fill="#2c2c2c" />
+      <rect x="8" y="20" width="2" height="2" fill="#2c2c2c" />
+      <rect x="22" y="20" width="2" height="2" fill="#2c2c2c" />
+      {/* Point d'exclamation */}
+      <rect x="15" y="12" width="2" height="4" fill="#ffffff" />
+      <rect x="15" y="18" width="2" height="2" fill="#ffffff" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Pivot (flèches circulaires)
+export function PivotIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Flèche haut-droite */}
+      <rect x="18" y="4" width="8" height="2" fill="#3498db" />
+      <rect x="24" y="6" width="2" height="8" fill="#3498db" />
+      <rect x="22" y="4" width="2" height="2" fill="#3498db" />
+      <rect x="26" y="6" width="2" height="2" fill="#3498db" />
+      {/* Arc haut */}
+      <rect x="14" y="6" width="4" height="2" fill="#3498db" />
+      <rect x="18" y="8" width="4" height="2" fill="#3498db" />
+      <rect x="20" y="10" width="2" height="2" fill="#3498db" />
+      {/* Flèche bas-gauche */}
+      <rect x="6" y="26" width="8" height="2" fill="#e74c3c" />
+      <rect x="6" y="18" width="2" height="8" fill="#e74c3c" />
+      <rect x="8" y="26" width="2" height="2" fill="#e74c3c" />
+      <rect x="4" y="24" width="2" height="2" fill="#e74c3c" />
+      {/* Arc bas */}
+      <rect x="14" y="24" width="4" height="2" fill="#e74c3c" />
+      <rect x="10" y="22" width="4" height="2" fill="#e74c3c" />
+      <rect x="10" y="20" width="2" height="2" fill="#e74c3c" />
+    </svg>
+  );
+}
+
+// Trophée Viral - 100 Cold Emails (pile d'enveloppes)
+export function ColdEmailsIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Enveloppe 1 (arrière) */}
+      <rect x="4" y="6" width="20" height="12" fill="#bdc3c7" />
+      <rect x="4" y="6" width="2" height="2" fill="#95a5a6" />
+      <rect x="22" y="6" width="2" height="2" fill="#95a5a6" />
+      {/* Enveloppe 2 (milieu) */}
+      <rect x="6" y="10" width="20" height="12" fill="#ecf0f1" />
+      <rect x="6" y="10" width="2" height="2" fill="#bdc3c7" />
+      <rect x="24" y="10" width="2" height="2" fill="#bdc3c7" />
+      {/* Enveloppe 3 (avant) */}
+      <rect x="8" y="14" width="20" height="12" fill="#ffffff" />
+      {/* Rabat */}
+      <rect x="8" y="14" width="10" height="2" fill="#3498db" />
+      <rect x="10" y="16" width="8" height="2" fill="#3498db" />
+      <rect x="12" y="18" width="6" height="2" fill="#3498db" />
+      <rect x="18" y="14" width="10" height="2" fill="#3498db" />
+      <rect x="20" y="16" width="6" height="2" fill="#3498db" />
+      <rect x="22" y="18" width="4" height="2" fill="#3498db" />
+      {/* "100" */}
+      <rect x="12" y="22" width="2" height="4" fill="#e74c3c" />
+      <rect x="16" y="22" width="4" height="4" fill="#e74c3c" />
+      <rect x="17" y="23" width="2" height="2" fill="#ffffff" />
+      <rect x="22" y="22" width="4" height="4" fill="#e74c3c" />
+      <rect x="23" y="23" width="2" height="2" fill="#ffffff" />
+    </svg>
+  );
+}
+
+// Trophée Viral - DM Warrior (bulle de chat avec épée)
+export function DmWarriorIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Bulle de chat */}
+      <rect x="4" y="4" width="20" height="16" fill="#9b59b6" />
+      <rect x="6" y="20" width="4" height="4" fill="#9b59b6" />
+      {/* Points de texte */}
+      <rect x="8" y="10" width="4" height="2" fill="#ffffff" />
+      <rect x="14" y="10" width="6" height="2" fill="#ffffff" />
+      <rect x="8" y="14" width="8" height="2" fill="#ffffff" />
+      {/* Épée */}
+      <rect x="22" y="2" width="2" height="12" fill="#bdc3c7" />
+      <rect x="20" y="14" width="6" height="2" fill="#f1c40f" />
+      <rect x="22" y="16" width="2" height="6" fill="#8B4513" />
+      <rect x="20" y="22" width="6" height="2" fill="#8B4513" />
+      {/* Éclat */}
+      <rect x="26" y="4" width="2" height="2" fill="#f1c40f" />
+      <rect x="28" y="6" width="2" height="2" fill="#f1c40f" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Rejeté par PH (chat Product Hunt avec X)
+export function RejectedPhIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Fond orange PH */}
+      <rect x="6" y="6" width="20" height="20" fill="#da552f" />
+      {/* Chat simplifié */}
+      <rect x="10" y="10" width="4" height="2" fill="#ffffff" />
+      <rect x="18" y="10" width="4" height="2" fill="#ffffff" />
+      <rect x="8" y="12" width="6" height="4" fill="#ffffff" />
+      <rect x="18" y="12" width="6" height="4" fill="#ffffff" />
+      {/* Nez */}
+      <rect x="14" y="14" width="4" height="2" fill="#ffcccc" />
+      {/* X rouge */}
+      <rect x="10" y="18" width="2" height="2" fill="#c0392b" />
+      <rect x="12" y="20" width="2" height="2" fill="#c0392b" />
+      <rect x="14" y="22" width="4" height="2" fill="#c0392b" />
+      <rect x="18" y="20" width="2" height="2" fill="#c0392b" />
+      <rect x="20" y="18" width="2" height="2" fill="#c0392b" />
+      <rect x="14" y="18" width="4" height="2" fill="#c0392b" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Zéro Like (coeur brisé avec 0)
+export function ZeroLikeIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Coeur gauche */}
+      <rect x="4" y="8" width="6" height="2" fill="#95a5a6" />
+      <rect x="2" y="10" width="10" height="6" fill="#95a5a6" />
+      <rect x="4" y="16" width="6" height="2" fill="#95a5a6" />
+      <rect x="6" y="18" width="4" height="2" fill="#95a5a6" />
+      <rect x="8" y="20" width="2" height="2" fill="#95a5a6" />
+      {/* Coeur droit */}
+      <rect x="18" y="8" width="6" height="2" fill="#95a5a6" />
+      <rect x="16" y="10" width="10" height="6" fill="#95a5a6" />
+      <rect x="18" y="16" width="6" height="2" fill="#95a5a6" />
+      <rect x="18" y="18" width="4" height="2" fill="#95a5a6" />
+      <rect x="18" y="20" width="2" height="2" fill="#95a5a6" />
+      {/* Fissure */}
+      <rect x="14" y="10" width="2" height="4" fill="#2c2c2c" />
+      <rect x="12" y="14" width="2" height="4" fill="#2c2c2c" />
+      <rect x="14" y="18" width="2" height="4" fill="#2c2c2c" />
+      {/* 0 */}
+      <rect x="12" y="24" width="8" height="6" fill="#e74c3c" />
+      <rect x="14" y="26" width="4" height="2" fill="#1a1a2e" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Copié (deux documents)
+export function CopiedIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Document arrière */}
+      <rect x="8" y="4" width="16" height="20" fill="#3498db" />
+      <rect x="10" y="8" width="10" height="2" fill="#ffffff" />
+      <rect x="10" y="12" width="12" height="2" fill="#ffffff" />
+      <rect x="10" y="16" width="8" height="2" fill="#ffffff" />
+      {/* Document avant (copie) */}
+      <rect x="12" y="8" width="16" height="20" fill="#2ecc71" />
+      <rect x="14" y="12" width="10" height="2" fill="#ffffff" />
+      <rect x="14" y="16" width="12" height="2" fill="#ffffff" />
+      <rect x="14" y="20" width="8" height="2" fill="#ffffff" />
+      {/* Badge check */}
+      <rect x="22" y="4" width="6" height="6" fill="#27ae60" />
+      <rect x="24" y="6" width="2" height="2" fill="#ffffff" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Viral par accident (explosion/fusée)
+export function ViralIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Explosion rayons */}
+      <rect x="14" y="2" width="4" height="4" fill="#f1c40f" />
+      <rect x="4" y="14" width="4" height="4" fill="#f1c40f" />
+      <rect x="24" y="14" width="4" height="4" fill="#f1c40f" />
+      <rect x="6" y="6" width="4" height="4" fill="#f39c12" />
+      <rect x="22" y="6" width="4" height="4" fill="#f39c12" />
+      <rect x="6" y="22" width="4" height="4" fill="#f39c12" />
+      <rect x="22" y="22" width="4" height="4" fill="#f39c12" />
+      {/* Centre */}
+      <rect x="10" y="10" width="12" height="12" fill="#e74c3c" />
+      <rect x="12" y="12" width="8" height="8" fill="#c0392b" />
+      {/* Graph qui monte */}
+      <rect x="13" y="18" width="2" height="2" fill="#2ecc71" />
+      <rect x="15" y="16" width="2" height="4" fill="#2ecc71" />
+      <rect x="17" y="12" width="2" height="8" fill="#2ecc71" />
+    </svg>
+  );
+}
+
+// Trophée Viral - Mention Presse (journal)
+export function PressIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Journal */}
+      <rect x="4" y="4" width="24" height="24" fill="#ecf0f1" />
+      {/* Header */}
+      <rect x="6" y="6" width="20" height="4" fill="#2c2c2c" />
+      <rect x="8" y="7" width="16" height="2" fill="#ecf0f1" />
+      {/* Lignes de texte */}
+      <rect x="6" y="12" width="8" height="2" fill="#bdc3c7" />
+      <rect x="6" y="16" width="10" height="1" fill="#bdc3c7" />
+      <rect x="6" y="18" width="8" height="1" fill="#bdc3c7" />
+      <rect x="6" y="20" width="10" height="1" fill="#bdc3c7" />
+      <rect x="6" y="22" width="6" height="1" fill="#bdc3c7" />
+      {/* Image placeholder */}
+      <rect x="18" y="12" width="8" height="8" fill="#3498db" />
+      <rect x="20" y="14" width="4" height="4" fill="#2980b9" />
+      {/* Étoile (featured) */}
+      <rect x="22" y="22" width="4" height="4" fill="#f1c40f" />
+    </svg>
+  );
+}
+
 // Mapping des icônes par ID d'achievement
 export const achievementIcons: Record<string, React.ComponentType<IconProps>> = {
   domain: DomainIcon,
@@ -777,6 +1056,18 @@ export const achievementIcons: Record<string, React.ComponentType<IconProps>> = 
   reddit: RedditIcon,
   youtube: YouTubeIcon,
   linkedin: LinkedInIcon,
+  // Viral trophies
+  first_hater: FirstHaterIcon,
+  nuit_blanche: NuitBlancheIcon,
+  bug_prod: BugProdIcon,
+  pivot: PivotIcon,
+  cold_emails: ColdEmailsIcon,
+  dm_warrior: DmWarriorIcon,
+  rejected_ph: RejectedPhIcon,
+  zero_like: ZeroLikeIcon,
+  copied: CopiedIcon,
+  viral: ViralIcon,
+  press: PressIcon,
 };
 
 // Composant générique pour afficher une icône d'achievement
