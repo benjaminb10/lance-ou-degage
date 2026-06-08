@@ -101,8 +101,9 @@ export function Header() {
             className="flex items-center gap-1.5 font-body text-sm text-text-secondary hover:text-accent transition-colors"
             title="Trophees"
           >
-            <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            <svg className="w-5 h-5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4h12v4a6 6 0 11-12 0V4z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 8H4a2 2 0 010-4h2M18 8h2a2 2 0 000-4h-2M9 20h6M12 14v6" />
             </svg>
             <span className="hidden md:inline">Trophees</span>
           </Link>
