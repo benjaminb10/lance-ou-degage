@@ -70,7 +70,7 @@ function TropheesPage() {
           <div>
             <h1 className="font-display text-2xl text-accent">trophées</h1>
             <p className="font-body text-sm text-text-secondary mt-1">
-              Les jalons de ton parcours de maker
+              Tous les trophées à débloquer
             </p>
           </div>
           <a
