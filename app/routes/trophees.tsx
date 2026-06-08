@@ -65,7 +65,7 @@ function TropheesPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-display text-2xl text-accent">trophees</h1>
+            <h1 className="font-display text-2xl text-accent">trophées</h1>
             <p className="font-body text-sm text-text-secondary mt-1">
               Les jalons de ton parcours d'indie maker
             </p>
@@ -115,13 +115,12 @@ function TropheesPage() {
                       <div className="mt-3">
                         <div className="flex items-center">
                           {/* Stacked avatars */}
-                          <div className="flex -space-x-2">
+                          <div className="flex -space-x-3">
                             {achievement.members.slice(0, 5).map((member) => (
                               <a
                                 key={member.id}
                                 href={`/membre/${member.id}`}
-                                className="relative w-7 h-7 rounded-full overflow-hidden border-2 border-bg-dark bg-bg-darker hover:z-10 hover:scale-110 transition-transform"
-                                title={member.name}
+                                className="group relative w-9 h-9 rounded-full overflow-hidden border-2 border-bg-dark bg-bg-darker hover:z-10 hover:scale-110 transition-transform"
                               >
                                 {member.avatar_url ? (
                                   <img
@@ -130,10 +129,14 @@ function TropheesPage() {
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-text-secondary font-display text-xs">
+                                  <div className="w-full h-full flex items-center justify-center text-text-secondary font-display text-sm">
                                     {member.name.charAt(0)}
                                   </div>
                                 )}
+                                {/* Tooltip */}
+                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-bg-dark border border-text-secondary/30 text-text-primary font-body text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                                  {member.name}
+                                </div>
                               </a>
                             ))}
                           </div>
@@ -152,7 +155,7 @@ function TropheesPage() {
                     ) : (
                       <div className="mt-3">
                         <span className="font-body text-xs text-text-secondary/60 italic">
-                          Pas encore debloque
+                          Pas encore débloqué
                         </span>
                       </div>
                     )}

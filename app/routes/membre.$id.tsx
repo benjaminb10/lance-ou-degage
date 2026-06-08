@@ -611,7 +611,7 @@ function MemberProfile() {
               </div>
               <div className="text-center">
                 <div className="font-display text-xl text-text-primary">{memberAchievements.length}</div>
-                <div className="font-body text-xs text-text-secondary">trophees</div>
+                <div className="font-body text-xs text-text-secondary">trophées</div>
               </div>
               <div className="text-center">
                 {isEditing ? (
