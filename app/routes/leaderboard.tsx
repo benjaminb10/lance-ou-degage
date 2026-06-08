@@ -66,7 +66,7 @@ function LeaderboardPage() {
           {/* Stats */}
           {!loading && members.length > 0 && (
             <motion.div
-              className="grid grid-cols-3 gap-4 mb-12 text-center"
+              className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-12 text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -81,6 +81,14 @@ function LeaderboardPage() {
               </div>
               <div className="bg-bg-darker/50 border border-text-secondary/10 p-4">
                 <div className="font-display text-2xl md:text-3xl text-text-primary">
+                  {formatTotalMRR(members.reduce((acc, m) => acc + m.mrr, 0))}
+                </div>
+                <div className="font-body text-xs text-text-secondary uppercase tracking-wider mt-1">
+                  MRR total
+                </div>
+              </div>
+              <div className="bg-bg-darker/50 border border-text-secondary/10 p-4">
+                <div className="font-display text-2xl md:text-3xl text-text-primary">
                   {members.reduce((acc, m) => acc + (m.projects?.length || 0), 0)}
                 </div>
                 <div className="font-body text-xs text-text-secondary uppercase tracking-wider mt-1">
@@ -88,11 +96,11 @@ function LeaderboardPage() {
                 </div>
               </div>
               <div className="bg-bg-darker/50 border border-text-secondary/10 p-4">
-                <div className="font-display text-2xl md:text-3xl text-text-primary">
-                  {formatTotalMRR(members.reduce((acc, m) => acc + m.mrr, 0))}
+                <div className="font-display text-2xl md:text-3xl text-accent">
+                  {members.reduce((acc, m) => acc + (m.member_achievements?.length || 0), 0)}
                 </div>
                 <div className="font-body text-xs text-text-secondary uppercase tracking-wider mt-1">
-                  MRR total
+                  trophées
                 </div>
               </div>
             </motion.div>

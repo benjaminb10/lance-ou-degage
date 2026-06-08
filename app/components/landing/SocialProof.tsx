@@ -83,11 +83,13 @@ export function SocialProof() {
   const [members, setMembers] = useState<Member[]>(fallbackFounders);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(fallbackFounders.length);
+  const [totalMRR, setTotalMRR] = useState(0);
+  const [totalProjects, setTotalProjects] = useState(0);
 
   useEffect(() => {
     async function fetchMembers() {
       try {
-        // Fetch top 5 members
+        // Fetch top 5 members for display
         const { data, error, count } = await supabase
           .from("members")
           .select(
@@ -109,6 +111,20 @@ export function SocialProof() {
           setMembers(data);
           setTotalCount(count || data.length);
         }
+
+        // Fetch all members for total stats
+        const { data: allMembers } = await supabase
+          .from("members")
+          .select("mrr, projects(id)")
+          .eq("onboarding_completed", true)
+          .eq("visible", true);
+
+        if (allMembers) {
+          const mrr = allMembers.reduce((acc, m) => acc + (m.mrr || 0), 0);
+          const projects = allMembers.reduce((acc, m) => acc + (m.projects?.length || 0), 0);
+          setTotalMRR(mrr);
+          setTotalProjects(projects);
+        }
       } catch (err) {
         // Use fallback data if Supabase fetch fails
         console.warn("Using fallback founder data");
@@ -118,6 +134,11 @@ export function SocialProof() {
     }
     fetchMembers();
   }, []);
+
+  function formatMRR(mrr: number): string {
+    if (mrr >= 1000) return `${(mrr / 1000).toFixed(mrr % 1000 === 0 ? 0 : 1)}K€`;
+    return `${mrr}€`;
+  }
 
   return (
     <section id="founders" className="relative py-32 px-4 bg-bg-dark overflow-hidden">
@@ -130,17 +151,51 @@ export function SocialProof() {
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Titre */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           <span className="font-body text-accent text-sm tracking-widest uppercase">
-            Fondateurs
+            La communauté
           </span>
           <h2 className="font-display text-4xl md:text-6xl text-text-primary mt-2">
             ils livrent.
           </h2>
+        </motion.div>
+
+        {/* Stats globales */}
+        <motion.div
+          className="grid grid-cols-3 gap-3 md:gap-6 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="bg-bg-darker/60 border border-text-secondary/20 p-4 md:p-6 text-center">
+            <div className="font-display text-2xl md:text-4xl text-accent">
+              {totalCount}
+            </div>
+            <div className="font-body text-xs md:text-sm text-text-secondary uppercase tracking-wider mt-1">
+              lanceurs
+            </div>
+          </div>
+          <div className="bg-bg-darker/60 border border-text-secondary/20 p-4 md:p-6 text-center">
+            <div className="font-display text-2xl md:text-4xl text-text-primary">
+              {formatMRR(totalMRR)}
+            </div>
+            <div className="font-body text-xs md:text-sm text-text-secondary uppercase tracking-wider mt-1">
+              MRR total
+            </div>
+          </div>
+          <div className="bg-bg-darker/60 border border-text-secondary/20 p-4 md:p-6 text-center">
+            <div className="font-display text-2xl md:text-4xl text-text-primary">
+              {totalProjects}
+            </div>
+            <div className="font-body text-xs md:text-sm text-text-secondary uppercase tracking-wider mt-1">
+              projets
+            </div>
+          </div>
         </motion.div>
 
         {/* Leaderboard */}
