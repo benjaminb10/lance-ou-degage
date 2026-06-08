@@ -69,38 +69,42 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-bg-darker border-b border-text-secondary/20">
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="font-display text-sm md:text-xl text-accent hover:text-text-primary transition-colors">
-          LANCE OU DÉGAGE
+        <Link to="/" className="font-display text-accent hover:text-text-primary transition-colors">
+          <span className="md:hidden text-base">LOD</span>
+          <span className="hidden md:inline text-xl">LANCE OU DÉGAGE</span>
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-3 md:gap-6">
+        <nav className="flex items-center gap-4 md:gap-6">
           <Link
             to="/leaderboard"
             className="flex items-center gap-1.5 font-body text-sm text-text-secondary hover:text-accent transition-colors"
+            title="Leaderboard"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            Leaderboard
+            <span className="hidden md:inline">Leaderboard</span>
           </Link>
           <Link
             to="/feed"
             className="flex items-center gap-1.5 font-body text-sm text-text-secondary hover:text-accent transition-colors"
+            title="Feed"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
             </svg>
-            Feed
+            <span className="hidden md:inline">Feed</span>
           </Link>
           <Link
             to="/trophees"
             className="flex items-center gap-1.5 font-body text-sm text-text-secondary hover:text-accent transition-colors"
+            title="Trophees"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
-            Trophees
+            <span className="hidden md:inline">Trophees</span>
           </Link>
 
           {/* Auth section */}
@@ -252,7 +256,7 @@ export function Header() {
             /* Not connected: Login button */
             <Link
               to="/login"
-              className="px-4 py-1.5 border border-accent text-accent font-body text-sm hover:bg-accent hover:text-bg-darker transition-colors"
+              className="px-3 md:px-4 py-1.5 border border-accent text-accent font-body text-xs md:text-sm hover:bg-accent hover:text-bg-darker transition-colors"
             >
               Connexion
             </Link>
