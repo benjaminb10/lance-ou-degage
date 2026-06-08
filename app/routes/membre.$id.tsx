@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import confetti from "canvas-confetti";
 import { supabase, type Member, type Achievement, type MemberAchievement, type Project } from "~/lib/supabase";
 import { useAuth } from "~/lib/auth";
 import { Vehicle } from "~/components/landing/VehicleSVG";
@@ -116,6 +117,14 @@ function MemberProfile() {
 
       if (!error && data) {
         setMemberAchievements((prev) => [...prev, data]);
+
+        // Fire confetti!
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ["#FF6B35", "#FFD700", "#FF8C00", "#FFA500"],
+        });
       }
     }
   }
