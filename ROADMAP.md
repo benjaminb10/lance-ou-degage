@@ -76,11 +76,17 @@ Avec 10 utilisateurs, la priorité est :
   - Visible sans connexion
   - Priorité : HAUTE (acquisition)
 
-- [ ] **Compteurs homepage** - Stats live
+- [x] **Compteurs homepage** - Stats live
   - Nombre de membres actifs
   - MRR total de la communauté
-  - Projets lancés ce mois
+  - Projets lancés
   - Priorité : MOYENNE
+  - ✅ Fait le 8 juin 2026
+
+- [x] **Stats leaderboard améliorées**
+  - Ajout compteur trophées
+  - Grid 2x2 mobile, 4 colonnes desktop
+  - ✅ Fait le 8 juin 2026
 
 - [ ] **Témoignages** - Section avec quotes des membres
   - Priorité : BASSE (besoin de plus de membres d'abord)

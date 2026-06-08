@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase, type Member } from "~/lib/supabase";
 import { MemberCard } from "~/components/MemberCard";
+import { StatsGrid } from "~/components/StatsGrid";
 
 // Fallback data for when Supabase is not configured
 const fallbackFounders: Member[] = [
@@ -85,6 +86,7 @@ export function SocialProof() {
   const [totalCount, setTotalCount] = useState(fallbackFounders.length);
   const [totalMRR, setTotalMRR] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
+  const [totalTrophies, setTotalTrophies] = useState(0);
 
   useEffect(() => {
     async function fetchMembers() {
@@ -115,15 +117,17 @@ export function SocialProof() {
         // Fetch all members for total stats
         const { data: allMembers } = await supabase
           .from("members")
-          .select("mrr, projects(id)")
+          .select("mrr, projects(id), member_achievements(achievement_id)")
           .eq("onboarding_completed", true)
           .eq("visible", true);
 
         if (allMembers) {
           const mrr = allMembers.reduce((acc, m) => acc + (m.mrr || 0), 0);
           const projects = allMembers.reduce((acc, m) => acc + (m.projects?.length || 0), 0);
+          const trophies = allMembers.reduce((acc, m) => acc + (m.member_achievements?.length || 0), 0);
           setTotalMRR(mrr);
           setTotalProjects(projects);
+          setTotalTrophies(trophies);
         }
       } catch (err) {
         // Use fallback data if Supabase fetch fails
@@ -134,11 +138,6 @@ export function SocialProof() {
     }
     fetchMembers();
   }, []);
-
-  function formatMRR(mrr: number): string {
-    if (mrr >= 1000) return `${(mrr / 1000).toFixed(mrr % 1000 === 0 ? 0 : 1)}K€`;
-    return `${mrr}€`;
-  }
 
   return (
     <section id="founders" className="relative py-32 px-4 bg-bg-dark overflow-hidden">
@@ -165,38 +164,15 @@ export function SocialProof() {
         </motion.div>
 
         {/* Stats globales */}
-        <motion.div
-          className="grid grid-cols-3 gap-3 md:gap-6 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-        >
-          <div className="bg-bg-darker/60 border border-text-secondary/20 p-4 md:p-6 text-center">
-            <div className="font-display text-2xl md:text-4xl text-accent">
-              {totalCount}
-            </div>
-            <div className="font-body text-xs md:text-sm text-text-secondary uppercase tracking-wider mt-1">
-              lanceurs
-            </div>
-          </div>
-          <div className="bg-bg-darker/60 border border-text-secondary/20 p-4 md:p-6 text-center">
-            <div className="font-display text-2xl md:text-4xl text-text-primary">
-              {formatMRR(totalMRR)}
-            </div>
-            <div className="font-body text-xs md:text-sm text-text-secondary uppercase tracking-wider mt-1">
-              MRR total
-            </div>
-          </div>
-          <div className="bg-bg-darker/60 border border-text-secondary/20 p-4 md:p-6 text-center">
-            <div className="font-display text-2xl md:text-4xl text-text-primary">
-              {totalProjects}
-            </div>
-            <div className="font-body text-xs md:text-sm text-text-secondary uppercase tracking-wider mt-1">
-              projets
-            </div>
-          </div>
-        </motion.div>
+        <div className="mb-12">
+          <StatsGrid
+            members={totalCount}
+            mrr={totalMRR}
+            projects={totalProjects}
+            trophies={totalTrophies}
+            delay={0.1}
+          />
+        </div>
 
         {/* Leaderboard */}
         <div className="space-y-4">
