@@ -634,6 +634,116 @@ export function Streak30Icon({ className = "", unlocked = true }: IconProps) {
   );
 }
 
+// Trophée Marketing - TikTok
+export function TikTokIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Note de musique stylisée TikTok */}
+      <rect x="10" y="4" width="4" height="20" fill="#ffffff" />
+      <rect x="14" y="4" width="8" height="4" fill="#25f4ee" />
+      <rect x="18" y="8" width="4" height="6" fill="#25f4ee" />
+      <rect x="14" y="4" width="4" height="2" fill="#fe2c55" style={{ transform: "translate(-2px, -2px)" }} />
+      <rect x="8" y="2" width="4" height="4" fill="#fe2c55" />
+      {/* Cercle bas */}
+      <rect x="4" y="20" width="10" height="8" fill="#ffffff" />
+      <rect x="6" y="22" width="6" height="4" fill="#1a1a2e" />
+      {/* Reflet cyan */}
+      <rect x="12" y="6" width="2" height="16" fill="#25f4ee" />
+    </svg>
+  );
+}
+
+// Trophée Marketing - X (Twitter)
+export function TwitterIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* X logo */}
+      <rect x="6" y="6" width="4" height="4" fill="#ffffff" />
+      <rect x="22" y="6" width="4" height="4" fill="#ffffff" />
+      <rect x="8" y="10" width="4" height="4" fill="#ffffff" />
+      <rect x="20" y="10" width="4" height="4" fill="#ffffff" />
+      <rect x="10" y="14" width="4" height="4" fill="#ffffff" />
+      <rect x="18" y="14" width="4" height="4" fill="#ffffff" />
+      <rect x="14" y="14" width="4" height="4" fill="#ffffff" />
+      <rect x="10" y="18" width="4" height="4" fill="#ffffff" />
+      <rect x="18" y="18" width="4" height="4" fill="#ffffff" />
+      <rect x="8" y="22" width="4" height="4" fill="#ffffff" />
+      <rect x="20" y="22" width="4" height="4" fill="#ffffff" />
+      <rect x="6" y="26" width="4" height="2" fill="#ffffff" />
+      <rect x="22" y="26" width="4" height="2" fill="#ffffff" />
+    </svg>
+  );
+}
+
+// Trophée Marketing - Reddit
+export function RedditIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Tête orange */}
+      <rect x="8" y="8" width="16" height="16" fill="#ff4500" />
+      <rect x="6" y="10" width="2" height="12" fill="#ff4500" />
+      <rect x="24" y="10" width="2" height="12" fill="#ff4500" />
+      <rect x="10" y="6" width="12" height="2" fill="#ff4500" />
+      <rect x="10" y="24" width="12" height="2" fill="#ff4500" />
+      {/* Yeux blancs */}
+      <rect x="10" y="12" width="4" height="4" fill="#ffffff" />
+      <rect x="18" y="12" width="4" height="4" fill="#ffffff" />
+      {/* Pupilles */}
+      <rect x="12" y="14" width="2" height="2" fill="#1a1a2e" />
+      <rect x="20" y="14" width="2" height="2" fill="#1a1a2e" />
+      {/* Sourire */}
+      <rect x="12" y="20" width="8" height="2" fill="#1a1a2e" />
+      {/* Antenne */}
+      <rect x="22" y="4" width="4" height="4" fill="#ff4500" />
+      <rect x="20" y="6" width="2" height="4" fill="#ff4500" />
+      {/* Oreilles */}
+      <rect x="4" y="10" width="4" height="4" fill="#ff4500" />
+      <rect x="24" y="10" width="4" height="4" fill="#ff4500" />
+    </svg>
+  );
+}
+
+// Trophée Marketing - YouTube
+export function YouTubeIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Rectangle rouge */}
+      <rect x="2" y="6" width="28" height="20" fill="#ff0000" />
+      <rect x="4" y="8" width="24" height="16" fill="#cc0000" />
+      {/* Bouton play blanc */}
+      <rect x="12" y="10" width="2" height="12" fill="#ffffff" />
+      <rect x="14" y="11" width="2" height="10" fill="#ffffff" />
+      <rect x="16" y="12" width="2" height="8" fill="#ffffff" />
+      <rect x="18" y="13" width="2" height="6" fill="#ffffff" />
+      <rect x="20" y="14" width="2" height="4" fill="#ffffff" />
+      {/* Coins arrondis */}
+      <rect x="2" y="6" width="2" height="2" fill="#1a1a2e" />
+      <rect x="28" y="6" width="2" height="2" fill="#1a1a2e" />
+      <rect x="2" y="24" width="2" height="2" fill="#1a1a2e" />
+      <rect x="28" y="24" width="2" height="2" fill="#1a1a2e" />
+    </svg>
+  );
+}
+
+// Trophée Marketing - LinkedIn
+export function LinkedInIcon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Fond bleu */}
+      <rect x="4" y="4" width="24" height="24" fill="#0077b5" />
+      {/* Lettre "in" */}
+      {/* i */}
+      <rect x="8" y="12" width="4" height="12" fill="#ffffff" />
+      <rect x="8" y="8" width="4" height="3" fill="#ffffff" />
+      {/* n */}
+      <rect x="14" y="12" width="4" height="12" fill="#ffffff" />
+      <rect x="18" y="14" width="2" height="10" fill="#ffffff" />
+      <rect x="20" y="12" width="4" height="12" fill="#ffffff" />
+      <rect x="16" y="12" width="6" height="3" fill="#ffffff" />
+    </svg>
+  );
+}
+
 // Mapping des icônes par ID d'achievement
 export const achievementIcons: Record<string, React.ComponentType<IconProps>> = {
   domain: DomainIcon,
@@ -661,6 +771,12 @@ export const achievementIcons: Record<string, React.ComponentType<IconProps>> = 
   streak_7: Streak7Icon,
   streak_14: Streak14Icon,
   streak_30: Streak30Icon,
+  // Marketing trophies
+  tiktok: TikTokIcon,
+  twitter: TwitterIcon,
+  reddit: RedditIcon,
+  youtube: YouTubeIcon,
+  linkedin: LinkedInIcon,
 };
 
 // Composant générique pour afficher une icône d'achievement

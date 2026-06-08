@@ -202,3 +202,15 @@ INSERT INTO achievements (id, name, description, icon, position) VALUES
   ('five_k_mrr', '5000€ MRR', 'Tu génères 5000€/mois', 'five_k_mrr', 19),
   ('ten_k_mrr', '10000€ MRR', 'Tu génères 10000€/mois', 'ten_k_mrr', 20)
 ON CONFLICT (id) DO NOTHING;
+
+-- =====================================================
+-- MIGRATION: Add marketing/distribution achievements
+-- =====================================================
+
+INSERT INTO achievements (id, name, description, icon, position) VALUES
+  ('tiktok', 'Premier TikTok', 'Tu as posté ta première vidéo TikTok', 'tiktok', 25),
+  ('twitter', 'Premier post X', 'Tu as posté sur X (Twitter)', 'twitter', 26),
+  ('reddit', 'Premier post Reddit', 'Tu as posté sur Reddit', 'reddit', 27),
+  ('youtube', 'Première vidéo YouTube', 'Tu as publié une vidéo YouTube', 'youtube', 28),
+  ('linkedin', 'Premier post LinkedIn', 'Tu as posté sur LinkedIn', 'linkedin', 29)
+ON CONFLICT (id) DO NOTHING;
