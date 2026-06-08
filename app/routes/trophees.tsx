@@ -120,19 +120,21 @@ function TropheesPage() {
                               <a
                                 key={member.id}
                                 href={`/membre/${member.id}`}
-                                className="group relative w-9 h-9 rounded-full overflow-hidden border-2 border-bg-dark bg-bg-darker hover:z-10 hover:scale-110 transition-transform"
+                                className="group relative w-9 h-9 rounded-full border-2 border-bg-dark bg-bg-darker hover:z-10 hover:scale-110 transition-transform"
                               >
-                                {member.avatar_url ? (
-                                  <img
-                                    src={member.avatar_url}
-                                    alt={member.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-text-secondary font-display text-sm">
-                                    {member.name.charAt(0)}
-                                  </div>
-                                )}
+                                <div className="w-full h-full rounded-full overflow-hidden">
+                                  {member.avatar_url ? (
+                                    <img
+                                      src={member.avatar_url}
+                                      alt={member.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-text-secondary font-display text-sm">
+                                      {member.name.charAt(0)}
+                                    </div>
+                                  )}
+                                </div>
                                 {/* Tooltip */}
                                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-bg-dark border border-text-secondary/30 text-text-primary font-body text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
                                   {member.name}
