@@ -222,11 +222,10 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO achievements (id, name, description, icon, position) VALUES
   ('first_hater', 'Premier hater', 'Quelqu''un t''a critiqué publiquement', 'first_hater', 30),
   ('nuit_blanche', 'Nuit blanche', 'Tu as codé jusqu''au lever du soleil', 'nuit_blanche', 31),
-  ('bug_prod', 'Bug en prod', 'Tu as cassé la prod un vendredi soir', 'bug_prod', 32),
+  ('bug_prod', 'Bug en prod', 'Tu as cassé la prod', 'bug_prod', 32),
   ('pivot', 'Pivot', 'Tu as changé d''idée de projet', 'pivot', 33),
   ('cold_emails', '100 cold emails', 'Tu as envoyé 100 emails', 'cold_emails', 34),
   ('dm_warrior', 'DM warrior', '50+ DMs de prospection envoyés', 'dm_warrior', 35),
-  ('rejected_ph', 'Rejeté par PH', 'Product Hunt a refusé ta soumission', 'rejected_ph', 36),
   ('zero_like', 'Zéro like', 'Ton post a fait un flop monumental', 'zero_like', 37),
   ('copied', 'Copié', 'Un concurrent t''a copié', 'copied', 38),
   ('viral', 'Viral par accident', 'Un truc random a explosé', 'viral', 39),

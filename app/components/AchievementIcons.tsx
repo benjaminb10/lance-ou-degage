@@ -1063,7 +1063,6 @@ export const achievementIcons: Record<string, React.ComponentType<IconProps>> = 
   pivot: PivotIcon,
   cold_emails: ColdEmailsIcon,
   dm_warrior: DmWarriorIcon,
-  rejected_ph: RejectedPhIcon,
   zero_like: ZeroLikeIcon,
   copied: CopiedIcon,
   viral: ViralIcon,
