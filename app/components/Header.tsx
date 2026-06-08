@@ -168,29 +168,32 @@ export function Header() {
                   {/* Trophies - clickable */}
                   {achievements.length > 0 && (
                     <a
-                      href={`/membre/${member.id}`}
+                      href={`/membre/${member.id}?tab=trophees`}
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 border-b border-text-secondary/20 hover:bg-accent/10 transition-colors"
+                      className="block px-4 py-3 border-b border-text-secondary/20 hover:bg-accent/10 transition-colors"
                     >
-                      <div className="flex items-center gap-1.5 flex-1">
-                        {displayedAchievements.map((ma) => (
-                          <div key={ma.achievement_id} className="w-7 h-7" title={ma.achievement?.name}>
-                            <AchievementIcon
-                              achievementId={ma.achievement_id}
-                              className="w-full h-full"
-                              unlocked={true}
-                            />
-                          </div>
-                        ))}
-                        {extraCount > 0 && (
-                          <div className="flex items-center justify-center font-body text-xs text-text-secondary ml-1">
-                            +{extraCount}
-                          </div>
-                        )}
+                      <div className="font-body text-xs text-text-secondary mb-2">Mes trophées</div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 flex-1">
+                          {displayedAchievements.map((ma) => (
+                            <div key={ma.achievement_id} className="w-7 h-7" title={ma.achievement?.name}>
+                              <AchievementIcon
+                                achievementId={ma.achievement_id}
+                                className="w-full h-full"
+                                unlocked={true}
+                              />
+                            </div>
+                          ))}
+                          {extraCount > 0 && (
+                            <div className="flex items-center justify-center font-body text-xs text-text-secondary ml-1">
+                              +{extraCount}
+                            </div>
+                          )}
+                        </div>
+                        <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </div>
-                      <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
                     </a>
                   )}
 

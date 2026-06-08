@@ -55,9 +55,14 @@ function MemberProfile() {
   // Check if current user is the owner of this profile
   const isOwner = user && member?.auth_id === user.id;
 
-  // Set default tab to "journal" when owner views their profile
+  // Set default tab based on URL param or owner status
   useEffect(() => {
-    if (isOwner) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get("tab");
+
+    if (tabParam === "trophees" || tabParam === "journal" || tabParam === "projets") {
+      setActiveTab(tabParam);
+    } else if (isOwner) {
       setActiveTab("journal");
     }
   }, [isOwner]);
@@ -766,6 +771,19 @@ function MemberProfile() {
                   </p>
                 </div>
               )}
+
+              {/* Bouton Modifier en bas */}
+              {isOwner && !isEditing && (
+                <div className="mt-4 text-center">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    modifier
+                  </Button>
+                </div>
+              )}
             </>
           )}
 
@@ -991,6 +1009,19 @@ function MemberProfile() {
                             </div>
                           ))}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Bouton Modifier en bas */}
+                  {isOwner && (
+                    <div className="mt-4 text-center">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        modifier
+                      </Button>
                     </div>
                   )}
                 </>
