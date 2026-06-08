@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TropheesRouteImport } from './routes/trophees'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MonEspaceRouteImport } from './routes/mon-espace'
 import { Route as LoginRouteImport } from './routes/login'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as MembreIdRouteImport } from './routes/membre.$id'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
+const TropheesRoute = TropheesRouteImport.update({
+  id: '/trophees',
+  path: '/trophees',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/mon-espace': typeof MonEspaceRoute
   '/onboarding': typeof OnboardingRoute
+  '/trophees': typeof TropheesRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/membre/$id': typeof MembreIdRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/mon-espace': typeof MonEspaceRoute
   '/onboarding': typeof OnboardingRoute
+  '/trophees': typeof TropheesRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/membre/$id': typeof MembreIdRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/mon-espace': typeof MonEspaceRoute
   '/onboarding': typeof OnboardingRoute
+  '/trophees': typeof TropheesRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/membre/$id': typeof MembreIdRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mon-espace'
     | '/onboarding'
+    | '/trophees'
     | '/auth/callback'
     | '/membre/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mon-espace'
     | '/onboarding'
+    | '/trophees'
     | '/auth/callback'
     | '/membre/$id'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mon-espace'
     | '/onboarding'
+    | '/trophees'
     | '/auth/callback'
     | '/membre/$id'
   fileRoutesById: FileRoutesById
@@ -143,12 +155,20 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MonEspaceRoute: typeof MonEspaceRoute
   OnboardingRoute: typeof OnboardingRoute
+  TropheesRoute: typeof TropheesRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   MembreIdRoute: typeof MembreIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trophees': {
+      id: '/trophees'
+      path: '/trophees'
+      fullPath: '/trophees'
+      preLoaderRoute: typeof TropheesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MonEspaceRoute: MonEspaceRoute,
   OnboardingRoute: OnboardingRoute,
+  TropheesRoute: TropheesRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   MembreIdRoute: MembreIdRoute,
 }
