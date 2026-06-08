@@ -2,11 +2,32 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
-import { supabase, type Member, type Achievement, type MemberAchievement, type Project } from "~/lib/supabase";
+import { supabase, type Member, type Achievement, type MemberAchievement, type Project, type Update } from "~/lib/supabase";
 import { useAuth } from "~/lib/auth";
 import { Vehicle } from "~/components/landing/VehicleSVG";
 import { AchievementIcon } from "~/components/AchievementIcons";
 import { Button } from "~/components/ui/Button";
+import { postUpdate, getMemberUpdates, hasPostedToday } from "~/lib/streak";
+
+function formatRelativeDate(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+
+  if (diffDays === 0) {
+    const diffHours = Math.floor(diffMs / (60 * 60 * 1000));
+    if (diffHours === 0) {
+      const diffMins = Math.floor(diffMs / (60 * 1000));
+      if (diffMins === 0) return "à l'instant";
+      return `il y a ${diffMins}m`;
+    }
+    return `il y a ${diffHours}h`;
+  }
+  if (diffDays === 1) return "hier";
+  if (diffDays < 7) return `il y a ${diffDays}j`;
+  return date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+}
 
 export const Route = createFileRoute("/membre/$id")({
   component: MemberProfile,
@@ -23,14 +44,111 @@ function MemberProfile() {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [memberAchievements, setMemberAchievements] = useState<MemberAchievement[]>([]);
+  const [updates, setUpdates] = useState<Update[]>([]);
+  const [newUpdateContent, setNewUpdateContent] = useState("");
+  const [alreadyPostedToday, setAlreadyPostedToday] = useState(false);
+  const [postingUpdate, setPostingUpdate] = useState(false);
+  const [activeTab, setActiveTab] = useState<"projets" | "journal" | "trophees">("projets");
+  const [editingUpdateId, setEditingUpdateId] = useState<string | null>(null);
+  const [editingUpdateContent, setEditingUpdateContent] = useState("");
 
   // Check if current user is the owner of this profile
   const isOwner = user && member?.auth_id === user.id;
 
+  // Set default tab to "journal" when owner views their profile
+  useEffect(() => {
+    if (isOwner) {
+      setActiveTab("journal");
+    }
+  }, [isOwner]);
+
   useEffect(() => {
     fetchMember();
     fetchAchievements();
+    fetchUpdates();
   }, [id]);
+
+  useEffect(() => {
+    if (isOwner && member) {
+      checkIfPostedToday();
+    }
+  }, [isOwner, member]);
+
+  async function fetchUpdates() {
+    const data = await getMemberUpdates(id, 10);
+    setUpdates(data);
+  }
+
+  async function checkIfPostedToday() {
+    if (!member) return;
+    const posted = await hasPostedToday(member.id);
+    setAlreadyPostedToday(posted);
+  }
+
+  async function handlePostUpdate() {
+    if (!member || !newUpdateContent.trim() || postingUpdate) return;
+
+    setPostingUpdate(true);
+    const result = await postUpdate(member.id, newUpdateContent);
+
+    if (result.success) {
+      setNewUpdateContent("");
+      setAlreadyPostedToday(true);
+      setMember((prev) => prev ? { ...prev, streak_count: result.newStreak } : null);
+      await fetchUpdates();
+      await fetchAchievements();
+
+      // Fire confetti for new achievements
+      if (result.unlockedAchievements.length > 0) {
+        confetti({
+          particleCount: 150,
+          spread: 100,
+          origin: { y: 0.6 },
+          colors: ["#FF6B35", "#FFD700", "#FF8C00", "#FFA500"],
+        });
+        // Refresh member achievements
+        const { data: newAchievements } = await supabase
+          .from("member_achievements")
+          .select("*")
+          .eq("member_id", member.id);
+        setMemberAchievements(newAchievements || []);
+      }
+    }
+    setPostingUpdate(false);
+  }
+
+  function startEditingUpdate(update: Update) {
+    setEditingUpdateId(update.id);
+    setEditingUpdateContent(update.content);
+  }
+
+  async function saveUpdateEdit() {
+    if (!editingUpdateId || !editingUpdateContent.trim() || !member) return;
+
+    const { error } = await supabase
+      .from("updates")
+      .update({ content: editingUpdateContent.trim() })
+      .eq("id", editingUpdateId)
+      .eq("member_id", member.id);
+
+    if (error) {
+      console.error("Error updating:", error);
+      return;
+    }
+
+    setUpdates((prev) =>
+      prev.map((u) =>
+        u.id === editingUpdateId ? { ...u, content: editingUpdateContent.trim() } : u
+      )
+    );
+    setEditingUpdateId(null);
+    setEditingUpdateContent("");
+  }
+
+  function cancelEditingUpdate() {
+    setEditingUpdateId(null);
+    setEditingUpdateContent("");
+  }
 
   useEffect(() => {
     if (member) {
@@ -282,7 +400,12 @@ function MemberProfile() {
               </div>
               {/* Name + Badge */}
               <div className="flex-1 min-w-0">
-                <h1 className="font-display text-lg text-text-primary">{member.name}</h1>
+                <h1 className="font-display text-lg text-text-primary">
+                  {member.name}
+                  {member.streak_count > 0 && (
+                    <span className="ml-2 text-sm text-orange-400">🔥{member.streak_count}</span>
+                  )}
+                </h1>
                 {member.is_founder && (
                   <span className="inline-block mt-1 px-2 py-0.5 bg-accent/20 border border-accent text-accent text-xs font-body">
                     fondateur
@@ -339,7 +462,12 @@ function MemberProfile() {
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-xl text-text-primary">{member.name}</h1>
+                <h1 className="font-display text-xl text-text-primary">
+                  {member.name}
+                  {member.streak_count > 0 && (
+                    <span className="ml-2 text-base text-orange-400">🔥{member.streak_count}</span>
+                  )}
+                </h1>
                 {member.is_founder && (
                   <span className="px-2 py-0.5 bg-accent/20 border border-accent text-accent text-xs font-body whitespace-nowrap">
                     fondateur
@@ -485,206 +613,389 @@ function MemberProfile() {
           </motion.div>
         )}
 
-        {/* Projects - BEFORE Trophies */}
-        {(isOwner && isEditing) || (member.projects && member.projects.length > 0) ? (
-          <motion.div
-            className="mt-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+        {/* Tabs Navigation */}
+        <div className="mt-6 flex border-b border-text-secondary/20">
+          <button
+            onClick={() => setActiveTab("projets")}
+            className={`px-4 py-3 font-body text-sm transition-colors border-b-2 -mb-[1px] ${
+              activeTab === "projets"
+                ? "text-accent border-accent"
+                : "text-text-secondary border-transparent hover:text-text-primary"
+            }`}
           >
-            <h2 className="font-display text-xl text-text-primary mb-4">Projets</h2>
+            Projets
+            {member.projects && member.projects.length > 0 && (
+              <span className="ml-1.5 text-xs opacity-60">({member.projects.length})</span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab("journal")}
+            className={`px-4 py-3 font-body text-sm transition-colors border-b-2 -mb-[1px] ${
+              activeTab === "journal"
+                ? "text-accent border-accent"
+                : "text-text-secondary border-transparent hover:text-text-primary"
+            }`}
+          >
+            Journal
+            {member.streak_count > 0 && (
+              <span className="ml-1.5 text-orange-400">🔥{member.streak_count}</span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab("trophees")}
+            className={`px-4 py-3 font-body text-sm transition-colors border-b-2 -mb-[1px] ${
+              activeTab === "trophees"
+                ? "text-accent border-accent"
+                : "text-text-secondary border-transparent hover:text-text-primary"
+            }`}
+          >
+            Trophées
+            <span className="ml-1.5 text-xs opacity-60">({memberAchievements.length}/{achievements.length})</span>
+          </button>
+        </div>
 
-            {isOwner && isEditing ? (
-              // Edit mode: editable project cards
-              <div className="space-y-4">
-                {editProjects.map((project, index) => (
-                  <div
-                    key={project.id || `new-${index}`}
-                    className="bg-bg-dark border border-text-secondary/20 p-4"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-3">
-                        <input
-                          type="text"
-                          value={project.name}
-                          onChange={(e) => updateProject(index, "name", e.target.value)}
-                          placeholder="Nom du projet"
-                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-display focus:border-accent focus:outline-none"
-                        />
-                        <input
-                          type="text"
-                          value={project.url || ""}
-                          onChange={(e) => updateProject(index, "url", e.target.value)}
-                          placeholder="URL (https://...)"
-                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none"
-                        />
-                        <input
-                          type="text"
-                          value={project.description || ""}
-                          onChange={(e) => updateProject(index, "description", e.target.value)}
-                          placeholder="Description courte"
-                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none"
-                        />
-                        <div className="flex items-center gap-2">
+        {/* Tab Content */}
+        <motion.div
+          key={activeTab}
+          className="mt-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {/* PROJETS TAB */}
+          {activeTab === "projets" && (
+            <>
+              {isOwner && isEditing ? (
+                <div className="space-y-4">
+                  {editProjects.map((project, index) => (
+                    <div
+                      key={project.id || `new-${index}`}
+                      className="bg-bg-dark border border-text-secondary/20 p-4"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 space-y-3">
                           <input
-                            type="number"
-                            value={project.mrr}
-                            onChange={(e) => updateProject(index, "mrr", parseInt(e.target.value) || 0)}
-                            placeholder="MRR"
-                            className="w-24 bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-display focus:border-accent focus:outline-none"
-                            min="0"
+                            type="text"
+                            value={project.name}
+                            onChange={(e) => updateProject(index, "name", e.target.value)}
+                            placeholder="Nom du projet"
+                            className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-display focus:border-accent focus:outline-none"
                           />
-                          <span className="text-text-secondary font-body text-sm">€/mois</span>
+                          <input
+                            type="text"
+                            value={project.url || ""}
+                            onChange={(e) => updateProject(index, "url", e.target.value)}
+                            placeholder="URL (https://...)"
+                            className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={project.description || ""}
+                            onChange={(e) => updateProject(index, "description", e.target.value)}
+                            placeholder="Description courte"
+                            className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none"
+                          />
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              value={project.mrr}
+                              onChange={(e) => updateProject(index, "mrr", parseInt(e.target.value) || 0)}
+                              placeholder="MRR"
+                              className="w-24 bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-display focus:border-accent focus:outline-none"
+                              min="0"
+                            />
+                            <span className="text-text-secondary font-body text-sm">€/mois</span>
+                          </div>
                         </div>
-                      </div>
-                      <button
-                        onClick={() => removeProject(index)}
-                        className="text-red-400 hover:text-red-300 transition-colors p-1"
-                        title="Supprimer"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                <button
-                  onClick={addProject}
-                  className="w-full border border-dashed border-text-secondary/30 p-4 text-text-secondary hover:border-accent hover:text-accent transition-colors font-body text-sm"
-                >
-                  + Ajouter un projet
-                </button>
-              </div>
-            ) : (
-              // View mode: display project cards
-              <div className="space-y-2">
-                {member.projects?.map((project) => (
-                  <div
-                    key={project.id}
-                    className="bg-bg-dark border border-text-secondary/20 p-4 flex items-center justify-between"
-                  >
-                    <div>
-                      <h3 className="font-display text-text-primary">{project.name}</h3>
-                      {project.description && (
-                        <p className="font-body text-sm text-text-secondary mt-1">{project.description}</p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-4">
-                      {project.mrr > 0 && (
-                        <span className="font-display text-accent">{project.mrr}€/mois</span>
-                      )}
-                      {project.url && (
-                        <a
-                          href={project.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-text-secondary hover:text-accent transition-colors"
+                        <button
+                          onClick={() => removeProject(index)}
+                          className="text-red-400 hover:text-red-300 transition-colors p-1"
+                          title="Supprimer"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
-                        </a>
-                      )}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-        ) : null}
-
-        {/* Trophies */}
-        <motion.div
-          className="mt-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <h2 className="font-display text-xl text-text-primary mb-4">Trophées</h2>
-
-          {isOwner && isEditing ? (
-            // Edit mode: show all achievements with checkboxes
-            <>
-              <p className="font-body text-sm text-text-secondary mb-4">
-                Coche les étapes que tu as accomplies. Ton tier monte avec chaque trophée !
-              </p>
-              <div className="space-y-2">
-                {achievements.map((achievement) => {
-                  const isUnlocked = memberAchievements.some((ma) => ma.achievement_id === achievement.id);
-                  return (
-                    <button
-                      key={achievement.id}
-                      onClick={() => toggleAchievement(achievement.id)}
-                      className={`w-full flex items-center gap-4 p-4 border transition-all ${
-                        isUnlocked
-                          ? "bg-accent/10 border-accent"
-                          : "bg-bg-dark border-text-secondary/20 hover:border-text-secondary/40"
-                      }`}
+                  ))}
+                  <button
+                    onClick={addProject}
+                    className="w-full border border-dashed border-text-secondary/30 p-4 text-text-secondary hover:border-accent hover:text-accent transition-colors font-body text-sm"
+                  >
+                    + Ajouter un projet
+                  </button>
+                </div>
+              ) : member.projects && member.projects.length > 0 ? (
+                <div className="space-y-2">
+                  {member.projects.map((project) => (
+                    <div
+                      key={project.id}
+                      className="bg-bg-dark border border-text-secondary/20 p-4 flex items-center justify-between"
                     >
-                      <div className="w-10 h-10 flex-shrink-0">
-                        <AchievementIcon
-                          achievementId={achievement.id}
-                          className="w-full h-full"
-                          unlocked={isUnlocked}
-                        />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <div className={`font-display ${isUnlocked ? "text-accent" : "text-text-primary"}`}>
-                          {achievement.name}
-                        </div>
-                        <div className="font-body text-xs text-text-secondary">
-                          {achievement.description}
-                        </div>
-                      </div>
-                      <div
-                        className={`w-6 h-6 border-2 flex items-center justify-center flex-shrink-0 ${
-                          isUnlocked ? "bg-accent border-accent" : "border-text-secondary/50"
-                        }`}
-                      >
-                        {isUnlocked && (
-                          <svg className="w-4 h-4 text-bg-darker" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
+                      <div>
+                        <h3 className="font-display text-text-primary">{project.name}</h3>
+                        {project.description && (
+                          <p className="font-body text-sm text-text-secondary mt-1">{project.description}</p>
                         )}
                       </div>
-                    </button>
-                  );
-                })}
-              </div>
+                      <div className="flex items-center gap-4">
+                        {project.mrr > 0 && (
+                          <span className="font-display text-accent">{project.mrr}€/mois</span>
+                        )}
+                        {project.url && (
+                          <a
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-text-secondary hover:text-accent transition-colors"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-bg-dark border border-text-secondary/20 p-8 text-center">
+                  <p className="font-body text-sm text-text-secondary">
+                    {isOwner ? "Clique sur \"modifier\" pour ajouter tes projets" : "Aucun projet pour l'instant"}
+                  </p>
+                </div>
+              )}
             </>
-          ) : (
-            // View mode: show all achievements (unlocked = normal, locked = grayed)
-            <div className="space-y-2">
-              {achievements.map((achievement) => {
-                const isUnlocked = memberAchievements.some((ma) => ma.achievement_id === achievement.id);
-                return (
-                  <div
-                    key={achievement.id}
-                    className={`w-full flex items-center gap-4 p-4 border bg-bg-dark border-text-secondary/20 ${
-                      !isUnlocked ? "opacity-40" : ""
-                    }`}
-                  >
-                    <div className="w-10 h-10 flex-shrink-0">
-                      <AchievementIcon
-                        achievementId={achievement.id}
-                        className="w-full h-full"
-                        unlocked={isUnlocked}
-                      />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="font-display text-text-primary">
-                        {achievement.name}
-                      </div>
-                      <div className="font-body text-xs text-text-secondary">
-                        {achievement.description}
-                      </div>
-                    </div>
+          )}
+
+          {/* JOURNAL TAB */}
+          {activeTab === "journal" && (
+            <>
+              {/* Post form (owner only) */}
+              {isOwner && (
+                <div className="bg-bg-dark border border-text-secondary/20 p-4 mb-4">
+                  <textarea
+                    value={newUpdateContent}
+                    onChange={(e) => setNewUpdateContent(e.target.value.slice(0, 280))}
+                    placeholder={alreadyPostedToday ? "Tu as déjà posté aujourd'hui ! Reviens demain 💪" : "Qu'as-tu fait aujourd'hui ?"}
+                    disabled={alreadyPostedToday}
+                    className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    rows={3}
+                  />
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="font-body text-xs text-text-secondary">
+                      {newUpdateContent.length}/280
+                    </span>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handlePostUpdate}
+                      disabled={alreadyPostedToday || !newUpdateContent.trim() || postingUpdate}
+                    >
+                      {postingUpdate ? "..." : "poster"}
+                    </Button>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              )}
+
+              {/* Updates list */}
+              {updates.length > 0 ? (
+                <div className="space-y-3">
+                  {updates.map((update) => (
+                    <div
+                      key={update.id}
+                      className="bg-bg-dark border border-text-secondary/20 p-4"
+                    >
+                      {editingUpdateId === update.id ? (
+                        // Edit mode
+                        <>
+                          <textarea
+                            value={editingUpdateContent}
+                            onChange={(e) => setEditingUpdateContent(e.target.value.slice(0, 280))}
+                            className="w-full bg-bg-darker border border-accent px-3 py-2 text-text-primary font-body text-sm focus:outline-none resize-none"
+                            rows={4}
+                            autoFocus
+                          />
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="font-body text-xs text-text-secondary">
+                              {editingUpdateContent.length}/280
+                            </span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={cancelEditingUpdate}
+                                className="px-3 py-1 font-body text-xs text-text-secondary hover:text-text-primary transition-colors"
+                              >
+                                annuler
+                              </button>
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={saveUpdateEdit}
+                                disabled={!editingUpdateContent.trim()}
+                              >
+                                sauvegarder
+                              </Button>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        // View mode
+                        <>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-body text-xs text-text-secondary">
+                              {formatRelativeDate(update.created_at)}
+                            </span>
+                            {isOwner && (
+                              <button
+                                onClick={() => startEditingUpdate(update)}
+                                className="text-text-secondary hover:text-accent transition-colors"
+                                title="Modifier"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                          <p className="font-body text-sm text-text-primary whitespace-pre-wrap">{update.content}</p>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-bg-dark border border-text-secondary/20 p-8 text-center">
+                  <p className="font-body text-sm text-text-secondary">
+                    {isOwner ? "Poste ta première update pour commencer ton streak ! 🔥" : "Aucune update pour l'instant."}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* TROPHEES TAB */}
+          {activeTab === "trophees" && (
+            <>
+              {isOwner && isEditing ? (
+                // Edit mode: list with checkboxes
+                <>
+                  <p className="font-body text-sm text-text-secondary mb-4">
+                    Coche les étapes que tu as accomplies. Ton tier monte avec chaque trophée !
+                  </p>
+                  <div className="space-y-2">
+                    {achievements.map((achievement) => {
+                      const isUnlocked = memberAchievements.some((ma) => ma.achievement_id === achievement.id);
+                      return (
+                        <button
+                          key={achievement.id}
+                          onClick={() => toggleAchievement(achievement.id)}
+                          className={`w-full flex items-center gap-4 p-3 border transition-all ${
+                            isUnlocked
+                              ? "bg-accent/10 border-accent"
+                              : "bg-bg-dark border-text-secondary/20 hover:border-text-secondary/40"
+                          }`}
+                        >
+                          <div className="w-8 h-8 flex-shrink-0">
+                            <AchievementIcon
+                              achievementId={achievement.id}
+                              className="w-full h-full"
+                              unlocked={isUnlocked}
+                            />
+                          </div>
+                          <div className="flex-1 text-left">
+                            <div className={`font-display text-sm ${isUnlocked ? "text-accent" : "text-text-primary"}`}>
+                              {achievement.name}
+                            </div>
+                            <div className="font-body text-xs text-text-secondary">
+                              {achievement.description}
+                            </div>
+                          </div>
+                          <div
+                            className={`w-5 h-5 border-2 flex items-center justify-center flex-shrink-0 ${
+                              isUnlocked ? "bg-accent border-accent" : "border-text-secondary/50"
+                            }`}
+                          >
+                            {isUnlocked && (
+                              <svg className="w-3 h-3 text-bg-darker" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                // View mode: compact grid
+                <>
+                  {/* Unlocked trophies */}
+                  {memberAchievements.length > 0 && (
+                    <div className="mb-6">
+                      <h3 className="font-body text-xs text-text-secondary uppercase tracking-wider mb-3">
+                        Débloqués ({memberAchievements.length})
+                      </h3>
+                      <div className="grid grid-cols-6 md:grid-cols-8 gap-2">
+                        {achievements
+                          .filter((a) => memberAchievements.some((ma) => ma.achievement_id === a.id))
+                          .map((achievement) => (
+                            <div
+                              key={achievement.id}
+                              className="relative group"
+                            >
+                              <div className="w-full aspect-square bg-bg-dark border border-accent/30 p-2 flex items-center justify-center">
+                                <AchievementIcon
+                                  achievementId={achievement.id}
+                                  className="w-full h-full"
+                                  unlocked={true}
+                                />
+                              </div>
+                              {/* Tooltip */}
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-bg-darker border border-text-secondary/30 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                                <div className="font-display text-xs text-accent">{achievement.name}</div>
+                                <div className="font-body text-[10px] text-text-secondary">{achievement.description}</div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Locked trophies */}
+                  {achievements.length > memberAchievements.length && (
+                    <div>
+                      <h3 className="font-body text-xs text-text-secondary uppercase tracking-wider mb-3">
+                        À débloquer ({achievements.length - memberAchievements.length})
+                      </h3>
+                      <div className="grid grid-cols-6 md:grid-cols-8 gap-2">
+                        {achievements
+                          .filter((a) => !memberAchievements.some((ma) => ma.achievement_id === a.id))
+                          .map((achievement) => (
+                            <div
+                              key={achievement.id}
+                              className="relative group"
+                            >
+                              <div className="w-full aspect-square bg-bg-dark border border-text-secondary/10 p-2 flex items-center justify-center opacity-30">
+                                <AchievementIcon
+                                  achievementId={achievement.id}
+                                  className="w-full h-full"
+                                  unlocked={false}
+                                />
+                              </div>
+                              {/* Tooltip */}
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-bg-darker border border-text-secondary/30 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                                <div className="font-display text-xs text-text-primary">{achievement.name}</div>
+                                <div className="font-body text-[10px] text-text-secondary">{achievement.description}</div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
           )}
         </motion.div>
       </div>

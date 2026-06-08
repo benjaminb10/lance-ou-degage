@@ -95,13 +95,55 @@ PGPASSWORD='xxx' psql -h db.bzutwrszmrmfzfxbmyeu.supabase.co -p 5432 -U postgres
 
 ### RLS / Permissions Supabase
 
-Pour que l'onboarding fonctionne, ces GRANT sont nécessaires :
+**IMPORTANT : Checklist pour chaque nouvelle table ou opération**
+
+Quand on crée une nouvelle table ou qu'on veut permettre une nouvelle opération (INSERT, UPDATE, DELETE) :
+
+#### 1. Activer RLS sur la table
 ```sql
-GRANT INSERT, SELECT ON members TO anon, authenticated;
-GRANT INSERT, SELECT ON projects TO anon, authenticated;
+ALTER TABLE ma_table ENABLE ROW LEVEL SECURITY;
 ```
 
-Les policies RLS existent déjà pour INSERT (`Anyone can insert members/projects`).
+#### 2. Créer les politiques RLS (qui peut faire quoi)
+```sql
+-- SELECT : qui peut lire
+CREATE POLICY "Anyone can view" ON ma_table FOR SELECT USING (true);
+
+-- INSERT : qui peut insérer
+CREATE POLICY "Members can insert own" ON ma_table FOR INSERT
+WITH CHECK (member_id IN (SELECT id FROM members WHERE auth_id = auth.uid()));
+
+-- UPDATE : qui peut modifier (USING = quelles lignes, WITH CHECK = nouvelles valeurs)
+CREATE POLICY "Members can update own" ON ma_table FOR UPDATE
+USING (true)
+WITH CHECK (member_id IN (SELECT id FROM members WHERE auth_id = auth.uid()));
+
+-- DELETE : qui peut supprimer
+CREATE POLICY "Members can delete own" ON ma_table FOR DELETE
+USING (member_id IN (SELECT id FROM members WHERE auth_id = auth.uid()));
+```
+
+#### 3. Accorder les GRANT (permissions bas niveau)
+```sql
+-- Sans ça, même avec RLS ok, l'opération échoue avec "permission denied"
+GRANT SELECT ON ma_table TO anon, authenticated;
+GRANT INSERT ON ma_table TO authenticated;
+GRANT UPDATE ON ma_table TO authenticated;
+GRANT DELETE ON ma_table TO authenticated;
+```
+
+**Erreurs courantes :**
+- `403 Forbidden` = politique RLS manquante ou incorrecte
+- `permission denied for table xxx` = GRANT manquant
+
+**Tables actuelles et leurs permissions :**
+| Table | SELECT | INSERT | UPDATE | DELETE |
+|-------|--------|--------|--------|--------|
+| members | anon, auth | anon, auth | auth | - |
+| projects | anon, auth | anon, auth | auth | auth |
+| updates | anon, auth | auth | auth | - |
+| achievements | anon, auth | - | - | - |
+| member_achievements | anon, auth | auth | - | auth |
 
 ### Routes
 

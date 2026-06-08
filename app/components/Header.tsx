@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth, signOut } from "~/lib/auth";
 import { supabase, type MemberAchievement } from "~/lib/supabase";
 import { AchievementIcon } from "~/components/AchievementIcons";
+import { Vehicle } from "~/components/landing/VehicleSVG";
 
 export function Header() {
   const { user, member, loading } = useAuth();
@@ -49,6 +50,20 @@ export function Header() {
 
   const displayedAchievements = achievements.slice(0, 5);
   const extraCount = achievements.length - 5;
+
+  // Calculate tier from trophies
+  function getTier(trophyCount: number): number {
+    if (trophyCount >= 20) return 8;
+    if (trophyCount >= 17) return 7;
+    if (trophyCount >= 14) return 6;
+    if (trophyCount >= 11) return 5;
+    if (trophyCount >= 8) return 4;
+    if (trophyCount >= 5) return 3;
+    if (trophyCount >= 3) return 2;
+    if (trophyCount >= 1) return 1;
+    return 0;
+  }
+  const tier = getTier(achievements.length);
 
   return (
     <header className="sticky top-0 z-50 bg-bg-darker border-b border-text-secondary/20">
@@ -108,24 +123,58 @@ export function Header() {
 
               {/* Dropdown */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-bg-dark border border-text-secondary/20 shadow-lg">
-                  {/* Member info */}
-                  <div className="px-4 py-3 border-b border-text-secondary/20">
-                    <div className="font-display text-text-primary">{member.name}</div>
-                    <div className="font-body text-xs text-text-secondary">{member.email}</div>
-                  </div>
+                <div className="absolute right-0 mt-2 w-72 bg-bg-dark border border-text-secondary/20 shadow-lg overflow-hidden">
+                  {/* Profile card - clickable */}
+                  <a
+                    href={`/membre/${member.id}`}
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 border-b border-text-secondary/20 hover:bg-accent/10 transition-colors group"
+                  >
+                    {/* Avatar */}
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0 group-hover:border-text-primary transition-colors">
+                      {member.avatar_url ? (
+                        <img
+                          src={member.avatar_url}
+                          alt={member.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-accent font-display text-sm">
+                          {member.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-display text-sm text-text-primary group-hover:text-accent transition-colors truncate">
+                          {member.name}
+                        </span>
+                        {member.streak_count > 0 && (
+                          <span className="text-xs text-orange-400 flex-shrink-0">🔥{member.streak_count}</span>
+                        )}
+                      </div>
+                      <div className="font-body text-xs text-text-secondary truncate">{member.email}</div>
+                    </div>
+                    {/* Vehicle */}
+                    <div className="flex-shrink-0 text-center">
+                      <Vehicle tier={tier} className="w-9 h-9" />
+                      <div className="font-body text-[9px] text-text-secondary mt-0.5">
+                        {["trottinette", "vélo", "moto", "voiture", "sport", "jetski", "yacht", "jet", "fusée"][tier]}
+                      </div>
+                    </div>
+                  </a>
 
                   {/* Trophies - clickable */}
                   {achievements.length > 0 && (
                     <a
                       href={`/membre/${member.id}`}
                       onClick={() => setDropdownOpen(false)}
-                      className="block px-4 py-3 border-b border-text-secondary/20 hover:bg-accent/10 transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 border-b border-text-secondary/20 hover:bg-accent/10 transition-colors"
                     >
-                      <div className="font-body text-xs text-text-secondary mb-2">Mes trophées</div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5 flex-1">
                         {displayedAchievements.map((ma) => (
-                          <div key={ma.achievement_id} className="w-6 h-6" title={ma.achievement?.name}>
+                          <div key={ma.achievement_id} className="w-7 h-7" title={ma.achievement?.name}>
                             <AchievementIcon
                               achievementId={ma.achievement_id}
                               className="w-full h-full"
@@ -134,27 +183,47 @@ export function Header() {
                           </div>
                         ))}
                         {extraCount > 0 && (
-                          <div className="w-6 h-6 flex items-center justify-center font-body text-xs text-text-secondary">
+                          <div className="flex items-center justify-center font-body text-xs text-text-secondary ml-1">
                             +{extraCount}
                           </div>
                         )}
                       </div>
+                      <svg className="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </a>
                   )}
 
-                  {/* Links */}
-                  <div className="py-1">
+                  {/* Actions */}
+                  <div className="py-2">
                     <a
                       href={`/membre/${member.id}`}
                       onClick={() => setDropdownOpen(false)}
-                      className="block px-4 py-2 font-body text-sm text-text-secondary hover:bg-accent/10 hover:text-accent transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 font-body text-sm text-text-secondary hover:bg-accent/10 hover:text-accent transition-colors"
                     >
-                      Dashboard
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Mon profil
                     </a>
+                    <a
+                      href="/feed"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 font-body text-sm text-text-secondary hover:bg-accent/10 hover:text-accent transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                      </svg>
+                      Feed
+                    </a>
+                    <div className="border-t border-text-secondary/20 my-2" />
                     <button
                       onClick={handleSignOut}
-                      className="w-full text-left px-4 py-2 font-body text-sm text-text-secondary hover:bg-accent/10 hover:text-accent transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 font-body text-sm text-red-400 hover:bg-red-400/10 transition-colors"
                     >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
                       Déconnexion
                     </button>
                   </div>

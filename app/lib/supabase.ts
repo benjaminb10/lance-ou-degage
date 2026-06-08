@@ -32,6 +32,8 @@ export interface Member {
   visible: boolean;
   countdown_started_at: string | null;
   auth_id: string | null;
+  streak_count: number;
+  last_update_at: string | null;
   projects?: Project[];
   member_achievements?: MemberAchievement[];
 }
@@ -60,4 +62,13 @@ export interface MemberAchievement {
   // Joined data
   achievement?: Achievement;
   member?: Member;
+}
+
+export interface Update {
+  id: string;
+  member_id: string;
+  content: string;
+  created_at: string;
+  // Joined data
+  member?: Pick<Member, "id" | "name" | "avatar_url" | "streak_count">;
 }

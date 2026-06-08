@@ -538,6 +538,102 @@ export function TenKMrrIcon({ className = "", unlocked = true }: IconProps) {
   );
 }
 
+// Streak Icons (Flames)
+export function Streak3Icon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Petite flamme - 3 jours */}
+      <rect x="14" y="22" width="4" height="4" fill="#ff6b35" />
+      <rect x="13" y="18" width="6" height="4" fill="#ff6b35" />
+      <rect x="12" y="14" width="8" height="4" fill="#ff8c00" />
+      <rect x="13" y="10" width="6" height="4" fill="#ffa500" />
+      <rect x="14" y="6" width="4" height="4" fill="#ffd700" />
+      <rect x="15" y="4" width="2" height="2" fill="#fff4cc" />
+      {/* Inner glow */}
+      <rect x="15" y="16" width="2" height="4" fill="#ffd700" />
+      {/* Base */}
+      <rect x="10" y="26" width="12" height="2" fill="#8b4513" />
+    </svg>
+  );
+}
+
+export function Streak7Icon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Flamme moyenne - 7 jours */}
+      <rect x="14" y="24" width="4" height="2" fill="#ff6b35" />
+      <rect x="12" y="20" width="8" height="4" fill="#ff6b35" />
+      <rect x="10" y="14" width="12" height="6" fill="#ff8c00" />
+      <rect x="11" y="8" width="10" height="6" fill="#ffa500" />
+      <rect x="12" y="4" width="8" height="4" fill="#ffd700" />
+      <rect x="14" y="2" width="4" height="2" fill="#fff4cc" />
+      {/* Inner glow */}
+      <rect x="14" y="12" width="4" height="8" fill="#ffd700" />
+      <rect x="15" y="10" width="2" height="2" fill="#fff4cc" />
+      {/* Sparks */}
+      <rect x="8" y="10" width="2" height="2" fill="#ffa500" />
+      <rect x="22" y="12" width="2" height="2" fill="#ffa500" />
+      {/* Base */}
+      <rect x="8" y="26" width="16" height="2" fill="#8b4513" />
+    </svg>
+  );
+}
+
+export function Streak14Icon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Grande flamme - 14 jours */}
+      <rect x="14" y="26" width="4" height="2" fill="#ff6b35" />
+      <rect x="11" y="22" width="10" height="4" fill="#ff6b35" />
+      <rect x="9" y="16" width="14" height="6" fill="#ff8c00" />
+      <rect x="8" y="10" width="16" height="6" fill="#ffa500" />
+      <rect x="10" y="4" width="12" height="6" fill="#ffd700" />
+      <rect x="12" y="2" width="8" height="2" fill="#fff4cc" />
+      {/* Inner glow */}
+      <rect x="13" y="12" width="6" height="10" fill="#ffd700" />
+      <rect x="14" y="8" width="4" height="4" fill="#fff4cc" />
+      {/* Multiple sparks */}
+      <rect x="6" y="8" width="2" height="2" fill="#ffa500" />
+      <rect x="24" y="10" width="2" height="2" fill="#ffa500" />
+      <rect x="5" y="14" width="2" height="2" fill="#ff8c00" />
+      <rect x="25" y="16" width="2" height="2" fill="#ff8c00" />
+      {/* Base */}
+      <rect x="6" y="28" width="20" height="2" fill="#8b4513" />
+    </svg>
+  );
+}
+
+export function Streak30Icon({ className = "", unlocked = true }: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} style={{ imageRendering: "pixelated", opacity: unlocked ? 1 : 0.3 }}>
+      {/* Flamme épique dorée - 30 jours */}
+      <rect x="14" y="28" width="4" height="2" fill="#ff6b35" />
+      <rect x="11" y="24" width="10" height="4" fill="#ff6b35" />
+      <rect x="8" y="18" width="16" height="6" fill="#ff8c00" />
+      <rect x="6" y="12" width="20" height="6" fill="#ffa500" />
+      <rect x="8" y="6" width="16" height="6" fill="#ffd700" />
+      <rect x="10" y="2" width="12" height="4" fill="#fff4cc" />
+      <rect x="12" y="0" width="8" height="2" fill="#ffffff" />
+      {/* Inner core - white hot */}
+      <rect x="12" y="14" width="8" height="10" fill="#ffd700" />
+      <rect x="13" y="10" width="6" height="4" fill="#fff4cc" />
+      <rect x="14" y="6" width="4" height="4" fill="#ffffff" />
+      {/* Many sparks */}
+      <rect x="4" y="6" width="2" height="2" fill="#ffd700" />
+      <rect x="26" y="8" width="2" height="2" fill="#ffd700" />
+      <rect x="2" y="12" width="2" height="2" fill="#ffa500" />
+      <rect x="28" y="14" width="2" height="2" fill="#ffa500" />
+      <rect x="4" y="18" width="2" height="2" fill="#ff8c00" />
+      <rect x="26" y="20" width="2" height="2" fill="#ff8c00" />
+      {/* Crown on top */}
+      <rect x="11" y="0" width="2" height="2" fill="#ffd700" />
+      <rect x="19" y="0" width="2" height="2" fill="#ffd700" />
+      {/* Base */}
+      <rect x="4" y="30" width="24" height="2" fill="#8b4513" />
+    </svg>
+  );
+}
+
 // Mapping des icônes par ID d'achievement
 export const achievementIcons: Record<string, React.ComponentType<IconProps>> = {
   domain: DomainIcon,
@@ -560,6 +656,11 @@ export const achievementIcons: Record<string, React.ComponentType<IconProps>> = 
   first_affiliate: FirstAffiliateIcon,
   five_k_mrr: FiveKMrrIcon,
   ten_k_mrr: TenKMrrIcon,
+  // Streak trophies
+  streak_3: Streak3Icon,
+  streak_7: Streak7Icon,
+  streak_14: Streak14Icon,
+  streak_30: Streak30Icon,
 };
 
 // Composant générique pour afficher une icône d'achievement

@@ -153,16 +153,6 @@ export function Pricing() {
           </p>
         </motion.div>
 
-        {/* Legal note */}
-        <motion.p
-          className="text-center font-body text-xs text-text-secondary/50 mt-12"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          En achetant, tu acceptes les CGV et renonces à ton droit de rétractation
-          pour accès immédiat au contenu numérique.
-        </motion.p>
       </div>
     </section>
   );
