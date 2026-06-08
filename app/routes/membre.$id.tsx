@@ -399,19 +399,19 @@ function MemberProfile() {
     );
   }
 
-  // Calcul du tier basé sur le nombre de trophées
-  function getTier(trophyCount: number): number {
-    if (trophyCount >= 20) return 8;  // Fusée
-    if (trophyCount >= 17) return 7;  // Hélicoptère
-    if (trophyCount >= 14) return 6;  // Jet privé
-    if (trophyCount >= 11) return 5;  // Avion
-    if (trophyCount >= 8) return 4;   // Voiture sport
-    if (trophyCount >= 5) return 3;   // Voiture
-    if (trophyCount >= 3) return 2;   // Moto
-    if (trophyCount >= 1) return 1;   // Vélo
+  // Calcul du tier basé sur le nombre de trophées et MRR
+  function getTier(trophyCount: number, mrr: number): number {
+    if (mrr >= 10000) return 8;        // Fusée = 10k MRR
+    if (trophyCount >= 17) return 7;   // Jet privé
+    if (trophyCount >= 14) return 6;   // Yacht
+    if (trophyCount >= 11) return 5;   // Jetski
+    if (trophyCount >= 8) return 4;    // Voiture sport
+    if (trophyCount >= 5) return 3;    // Voiture
+    if (trophyCount >= 3) return 2;    // Moto
+    if (trophyCount >= 1) return 1;    // Vélo
     return 0;                          // Trottinette
   }
-  const tier = getTier(memberAchievements.length);
+  const tier = getTier(memberAchievements.length, member?.mrr || 0);
   const isCountdownActive = member.countdown_started_at && countdown.days + countdown.hours + countdown.minutes + countdown.seconds > 0;
   const isCountdownExpired = member.countdown_started_at && countdown.days + countdown.hours + countdown.minutes + countdown.seconds === 0;
 

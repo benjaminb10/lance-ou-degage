@@ -51,9 +51,11 @@ export function Header() {
   const displayedAchievements = achievements.slice(0, 5);
   const extraCount = achievements.length - 5;
 
-  // Calculate tier from trophies
-  function getTier(trophyCount: number): number {
-    if (trophyCount >= 20) return 8;
+  // Calculate tier from trophies and MRR
+  function getTier(trophyCount: number, mrr: number): number {
+    // Fusée = 10k MRR
+    if (mrr >= 10000) return 8;
+    // Other tiers based on trophies
     if (trophyCount >= 17) return 7;
     if (trophyCount >= 14) return 6;
     if (trophyCount >= 11) return 5;
@@ -63,7 +65,7 @@ export function Header() {
     if (trophyCount >= 1) return 1;
     return 0;
   }
-  const tier = getTier(achievements.length);
+  const tier = getTier(achievements.length, member?.mrr || 0);
 
   return (
     <header className="sticky top-0 z-50 bg-bg-darker border-b border-text-secondary/20">
