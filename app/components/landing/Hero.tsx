@@ -1,14 +1,34 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { RoadScene } from "./RoadScene";
 import { Button } from "../ui/Button";
 import { Vehicle } from "./VehicleSVG";
-
-// Compteur réel depuis la DB
-const stats = {
-  lanceurs: 0,
-};
+import { supabase } from "~/lib/supabase";
 
 export function Hero() {
+  const [stats, setStats] = useState({ lanceurs: 0, mrr: 0, trophees: 0 });
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const { data } = await supabase
+          .from("members")
+          .select("mrr, member_achievements(achievement_id)")
+          .eq("onboarding_completed", true)
+          .eq("visible", true);
+
+        if (data) {
+          const lanceurs = data.length;
+          const mrr = data.reduce((acc, m) => acc + (m.mrr || 0), 0);
+          const trophees = data.reduce((acc, m) => acc + (m.member_achievements?.length || 0), 0);
+          setStats({ lanceurs, mrr, trophees });
+        }
+      } catch (err) {
+        console.warn("Failed to fetch stats");
+      }
+    }
+    fetchStats();
+  }, []);
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* Route animée en arrière-plan */}
@@ -101,20 +121,26 @@ export function Hero() {
           ))}
         </motion.div>
 
-        {/* Compteur lanceurs - affiché uniquement quand il y en a */}
-        {stats.lanceurs > 0 && (
-          <motion.div
-            className="mt-6 flex items-center gap-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.8 }}
-          >
-            <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-            <span className="font-body text-sm text-text-secondary">
-              <span className="text-accent font-semibold">{stats.lanceurs}</span> lanceurs en action
-            </span>
-          </motion.div>
-        )}
+        {/* Stats FOMO - toujours visibles */}
+        <motion.div
+          className="mt-8 flex items-center justify-center gap-2 md:gap-3 flex-wrap"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+        >
+          <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+          <span className="font-body text-sm md:text-base text-text-secondary">
+            <span className="text-accent font-semibold">{stats.lanceurs}</span> lanceurs en course
+          </span>
+          <span className="text-text-secondary/50">·</span>
+          <span className="font-body text-sm md:text-base text-text-secondary">
+            <span className="text-accent font-semibold">{stats.mrr.toLocaleString("fr-FR")}€</span> générés ce mois
+          </span>
+          <span className="text-text-secondary/50">·</span>
+          <span className="font-body text-sm md:text-base text-text-secondary">
+            <span className="text-accent font-semibold">{stats.trophees}</span> trophées débloqués
+          </span>
+        </motion.div>
       </div>
 
       {/* Scroll indicator */}

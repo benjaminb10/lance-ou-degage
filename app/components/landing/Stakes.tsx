@@ -82,6 +82,32 @@ export function Stakes() {
         >
           pas de remboursement.
         </motion.p>
+
+        {/* Wall of Shame teaser */}
+        <motion.div
+          className="mt-20 pt-16 border-t border-accent/20"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+        >
+          <div className="text-center">
+            <span className="font-body text-text-secondary/60 text-sm tracking-widest uppercase">
+              Le mur de la honte
+            </span>
+            <div className="mt-6 flex items-center justify-center gap-4">
+              <span className="text-5xl md:text-6xl">💀</span>
+              <div className="text-left">
+                <p className="font-display text-2xl md:text-3xl text-text-primary">
+                  0 dégagés...
+                </p>
+                <p className="font-body text-lg text-accent">
+                  pour l'instant.
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

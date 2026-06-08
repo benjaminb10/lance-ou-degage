@@ -97,13 +97,13 @@ export function SocialProof() {
           .select(
             `
             *,
-            projects(*)
+            projects(*),
+            member_achievements(achievement_id)
           `,
             { count: "exact" }
           )
           .eq("onboarding_completed", true)
           .eq("visible", true)
-          .order("tier", { ascending: false })
           .order("mrr", { ascending: false })
           .limit(5);
 
@@ -156,11 +156,14 @@ export function SocialProof() {
           viewport={{ once: true }}
         >
           <span className="font-body text-accent text-sm tracking-widest uppercase">
-            La communauté
+            Le Crew
           </span>
           <h2 className="font-display text-4xl md:text-6xl text-text-primary mt-2">
-            ils livrent.
+            ils ont 30 jours.
           </h2>
+          <p className="font-body text-xl md:text-2xl text-text-secondary mt-3">
+            et toi ?
+          </p>
         </motion.div>
 
         {/* Stats globales */}
