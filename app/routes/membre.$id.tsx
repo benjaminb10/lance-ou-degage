@@ -45,6 +45,7 @@ function MemberProfile() {
   const [editTwitter, setEditTwitter] = useState("");
   const [editTiktok, setEditTiktok] = useState("");
   const [editInstagram, setEditInstagram] = useState("");
+  const [editYoutube, setEditYoutube] = useState("");
   const [editBio, setEditBio] = useState("");
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -170,6 +171,7 @@ function MemberProfile() {
       setEditTwitter(member.twitter_url || "");
       setEditTiktok(member.tiktok_url || "");
       setEditInstagram(member.instagram_url || "");
+      setEditYoutube(member.youtube_url || "");
       setEditBio(member.bio || "");
     }
   }, [member]);
@@ -391,6 +393,7 @@ function MemberProfile() {
         twitter_url: editTwitter.trim() || null,
         tiktok_url: editTiktok.trim() || null,
         instagram_url: editInstagram.trim() || null,
+        youtube_url: editYoutube.trim() || null,
         bio: editBio.trim() || null,
       })
       .eq("id", member.id);
@@ -402,6 +405,7 @@ function MemberProfile() {
         twitter_url: editTwitter.trim() || null,
         tiktok_url: editTiktok.trim() || null,
         instagram_url: editInstagram.trim() || null,
+        youtube_url: editYoutube.trim() || null,
         bio: editBio.trim() || null,
       } : null);
     }
@@ -561,6 +565,13 @@ function MemberProfile() {
                   </svg>
                 </a>
               )}
+              {member.youtube_url && (
+                <a href={member.youtube_url} target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-accent transition-colors">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                </a>
+              )}
             </div>
           </div>
 
@@ -665,6 +676,18 @@ function MemberProfile() {
                     </svg>
                   </a>
                 )}
+                {member.youtube_url && (
+                  <a
+                    href={member.youtube_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-text-secondary hover:text-accent transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </a>
+                )}
               </div>
             </div>
 
@@ -736,6 +759,18 @@ function MemberProfile() {
                   value={editInstagram}
                   onChange={(e) => setEditInstagram(e.target.value)}
                   placeholder="URL Instagram (https://instagram.com/...)"
+                  className="flex-1 bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none"
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <svg className="w-5 h-5 text-text-secondary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                <input
+                  type="url"
+                  value={editYoutube}
+                  onChange={(e) => setEditYoutube(e.target.value)}
+                  placeholder="URL YouTube (https://youtube.com/@...)"
                   className="flex-1 bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none"
                 />
               </div>

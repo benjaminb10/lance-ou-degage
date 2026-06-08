@@ -31,6 +31,7 @@ export interface Member {
   twitter_url: string | null;
   tiktok_url: string | null;
   instagram_url: string | null;
+  youtube_url: string | null;
   avatar_url: string | null;
   bio: string | null;
   tier: number;
