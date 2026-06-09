@@ -55,10 +55,11 @@ export function LiveTrophyNotification() {
     result.push(remaining.splice(firstIndex, 1)[0]);
 
     while (remaining.length > 0) {
-      const lastMemberId = result[result.length - 1].member_id;
+      // Use member.id for comparison (more reliable than member_id)
+      const lastMemberId = result[result.length - 1].member.id;
 
       // Find items from different members
-      const differentMemberItems = remaining.filter(item => item.member_id !== lastMemberId);
+      const differentMemberItems = remaining.filter(item => item.member.id !== lastMemberId);
 
       if (differentMemberItems.length > 0) {
         // Pick random item from different member
