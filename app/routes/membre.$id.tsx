@@ -716,8 +716,8 @@ function MemberProfile() {
             </div>
           </div>
 
-          {/* Profile edit (bio + social links) */}
-          {isOwner && isEditing && (
+          {/* Profile edit (bio + social links) - hidden on trophees tab */}
+          {isOwner && isEditing && activeTab !== "trophees" && (
             <div className="mt-6 pt-6 border-t border-text-secondary/20 space-y-3">
               <div>
                 <label className="font-body text-xs text-text-secondary mb-1 block">Bio</label>
