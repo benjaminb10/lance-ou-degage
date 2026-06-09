@@ -847,7 +847,10 @@ function MemberProfile() {
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => setIsEditing(true)}
+                    onClick={() => {
+                      setActiveTab("projets");
+                      setIsEditing(true);
+                    }}
                   >
                     modifier
                   </Button>
