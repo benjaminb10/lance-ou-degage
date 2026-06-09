@@ -88,11 +88,19 @@ export function LiveTrophyNotification() {
         achievement:achievements!inner(id, name, description, icon)
       `)
       .order("unlocked_at", { ascending: false })
-      .limit(15);
+      .limit(50);
 
     if (!error && data) {
+      // Limit to max 2 achievements per member for variety
+      const memberCounts: Record<string, number> = {};
+      const limited = (data as FeedItem[]).filter(item => {
+        const memberId = item.member.id;
+        memberCounts[memberId] = (memberCounts[memberId] || 0) + 1;
+        return memberCounts[memberId] <= 2;
+      });
+
       // Shuffle ensuring no consecutive same member
-      const shuffled = shuffleNoConsecutive(data as any);
+      const shuffled = shuffleNoConsecutive(limited);
       setItems(shuffled);
     }
   }
