@@ -843,13 +843,25 @@ function MemberProfile() {
                   terminer
                 </Button>
               ) : (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setIsEditing(true)}
-                >
-                  modifier
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    modifier
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => {
+                      setActiveTab("trophees");
+                      setIsEditing(true);
+                    }}
+                  >
+                    🏆 débloquer
+                  </Button>
+                </div>
               )
             )}
           </div>
