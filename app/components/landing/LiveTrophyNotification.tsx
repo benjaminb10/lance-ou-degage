@@ -43,38 +43,45 @@ export function LiveTrophyNotification() {
     };
   }, [items]);
 
-  // Shuffle items ensuring no consecutive items from the same member
+  // Shuffle items ensuring no consecutive items from the same member (including wrap-around)
   function shuffleNoConsecutive(arr: FeedItem[]): FeedItem[] {
     if (arr.length <= 1) return arr;
 
-    const result: FeedItem[] = [];
-    const remaining = [...arr];
+    // Try multiple times to get a good shuffle
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const result: FeedItem[] = [];
+      const remaining = [...arr];
 
-    // Start with a random item
-    const firstIndex = Math.floor(Math.random() * remaining.length);
-    result.push(remaining.splice(firstIndex, 1)[0]);
+      // Start with a random item
+      const firstIndex = Math.floor(Math.random() * remaining.length);
+      result.push(remaining.splice(firstIndex, 1)[0]);
 
-    while (remaining.length > 0) {
-      // Use member.id for comparison (more reliable than member_id)
-      const lastMemberId = result[result.length - 1].member.id;
+      while (remaining.length > 0) {
+        const lastMemberId = result[result.length - 1].member.id;
 
-      // Find items from different members
-      const differentMemberItems = remaining.filter(item => item.member.id !== lastMemberId);
+        // Find items from different members
+        const differentMemberItems = remaining.filter(item => item.member.id !== lastMemberId);
 
-      if (differentMemberItems.length > 0) {
-        // Pick random item from different member
-        const randomIndex = Math.floor(Math.random() * differentMemberItems.length);
-        const chosen = differentMemberItems[randomIndex];
-        result.push(chosen);
-        remaining.splice(remaining.indexOf(chosen), 1);
-      } else {
-        // No choice, have to use same member (fallback)
-        const randomIndex = Math.floor(Math.random() * remaining.length);
-        result.push(remaining.splice(randomIndex, 1)[0]);
+        if (differentMemberItems.length > 0) {
+          const randomIndex = Math.floor(Math.random() * differentMemberItems.length);
+          const chosen = differentMemberItems[randomIndex];
+          result.push(chosen);
+          remaining.splice(remaining.indexOf(chosen), 1);
+        } else {
+          // No choice, have to use same member
+          const randomIndex = Math.floor(Math.random() * remaining.length);
+          result.push(remaining.splice(randomIndex, 1)[0]);
+        }
+      }
+
+      // Check wrap-around: last item vs first item
+      if (result.length > 1 && result[result.length - 1].member.id !== result[0].member.id) {
+        return result; // Good shuffle, no wrap-around collision
       }
     }
 
-    return result;
+    // Fallback: return best effort
+    return arr.sort(() => Math.random() - 0.5);
   }
 
   async function fetchRecentAchievements() {
@@ -88,19 +95,11 @@ export function LiveTrophyNotification() {
         achievement:achievements!inner(id, name, description, icon)
       `)
       .order("unlocked_at", { ascending: false })
-      .limit(50);
+      .limit(20);
 
     if (!error && data) {
-      // Limit to max 2 achievements per member for variety
-      const memberCounts: Record<string, number> = {};
-      const limited = (data as FeedItem[]).filter(item => {
-        const memberId = item.member.id;
-        memberCounts[memberId] = (memberCounts[memberId] || 0) + 1;
-        return memberCounts[memberId] <= 2;
-      });
-
       // Shuffle ensuring no consecutive same member
-      const shuffled = shuffleNoConsecutive(limited);
+      const shuffled = shuffleNoConsecutive(data as FeedItem[]);
       setItems(shuffled);
     }
   }
