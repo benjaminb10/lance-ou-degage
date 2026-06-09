@@ -43,6 +43,39 @@ export function LiveTrophyNotification() {
     };
   }, [items]);
 
+  // Shuffle items ensuring no consecutive items from the same member
+  function shuffleNoConsecutive(arr: FeedItem[]): FeedItem[] {
+    if (arr.length <= 1) return arr;
+
+    const result: FeedItem[] = [];
+    const remaining = [...arr];
+
+    // Start with a random item
+    const firstIndex = Math.floor(Math.random() * remaining.length);
+    result.push(remaining.splice(firstIndex, 1)[0]);
+
+    while (remaining.length > 0) {
+      const lastMemberId = result[result.length - 1].member_id;
+
+      // Find items from different members
+      const differentMemberItems = remaining.filter(item => item.member_id !== lastMemberId);
+
+      if (differentMemberItems.length > 0) {
+        // Pick random item from different member
+        const randomIndex = Math.floor(Math.random() * differentMemberItems.length);
+        const chosen = differentMemberItems[randomIndex];
+        result.push(chosen);
+        remaining.splice(remaining.indexOf(chosen), 1);
+      } else {
+        // No choice, have to use same member (fallback)
+        const randomIndex = Math.floor(Math.random() * remaining.length);
+        result.push(remaining.splice(randomIndex, 1)[0]);
+      }
+    }
+
+    return result;
+  }
+
   async function fetchRecentAchievements() {
     const { data, error } = await supabase
       .from("member_achievements")
@@ -54,12 +87,12 @@ export function LiveTrophyNotification() {
         achievement:achievements!inner(id, name, description, icon)
       `)
       .order("unlocked_at", { ascending: false })
-      .limit(10);
+      .limit(15);
 
     if (!error && data) {
-      // Shuffle the items randomly
-      const shuffled = [...data].sort(() => Math.random() - 0.5);
-      setItems(shuffled as any);
+      // Shuffle ensuring no consecutive same member
+      const shuffled = shuffleNoConsecutive(data as any);
+      setItems(shuffled);
     }
   }
 
