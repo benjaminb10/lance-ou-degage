@@ -859,7 +859,11 @@ function MemberProfile() {
                       setIsEditing(true);
                     }}
                   >
-                    🏆 débloquer
+                    <svg className="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4h12v4a6 6 0 11-12 0V4z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 8H4a2 2 0 010-4h2M18 8h2a2 2 0 000-4h-2M9 20h6M12 14v6" />
+                    </svg>
+                    débloquer
                   </Button>
                 </div>
               )
