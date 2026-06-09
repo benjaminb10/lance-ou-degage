@@ -871,8 +871,8 @@ function MemberProfile() {
           </div>
         </motion.div>
 
-        {/* Countdown */}
-        {member.countdown_started_at && (
+        {/* Countdown - hidden when editing trophees */}
+        {member.countdown_started_at && !(isEditing && activeTab === "trophees") && (
           <motion.div
             className={`mt-6 p-6 border text-center ${
               isCountdownExpired
