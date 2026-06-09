@@ -77,7 +77,7 @@ export function Header() {
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-4 md:gap-6">
+        <nav className="flex items-center gap-2 md:gap-6">
           <Link
             to="/leaderboard"
             className="flex items-center gap-1.5 font-body text-sm text-text-secondary hover:text-accent transition-colors"
