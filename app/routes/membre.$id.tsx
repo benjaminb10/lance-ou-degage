@@ -47,6 +47,7 @@ function MemberProfile() {
   const [editInstagram, setEditInstagram] = useState("");
   const [editYoutube, setEditYoutube] = useState("");
   const [editBio, setEditBio] = useState("");
+  const [editObjective, setEditObjective] = useState("");
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [memberAchievements, setMemberAchievements] = useState<MemberAchievement[]>([]);
@@ -173,6 +174,7 @@ function MemberProfile() {
       setEditInstagram(member.instagram_url || "");
       setEditYoutube(member.youtube_url || "");
       setEditBio(member.bio || "");
+      setEditObjective(member.objective || "");
     }
   }, [member]);
 
@@ -395,6 +397,7 @@ function MemberProfile() {
         instagram_url: editInstagram.trim() || null,
         youtube_url: editYoutube.trim() || null,
         bio: editBio.trim() || null,
+        objective: editObjective.trim() || null,
       })
       .eq("id", member.id);
 
@@ -407,6 +410,7 @@ function MemberProfile() {
         instagram_url: editInstagram.trim() || null,
         youtube_url: editYoutube.trim() || null,
         bio: editBio.trim() || null,
+        objective: editObjective.trim() || null,
       } : null);
     }
   }
@@ -535,6 +539,12 @@ function MemberProfile() {
             {member.bio && (
               <p className="font-body text-sm text-text-secondary">{member.bio}</p>
             )}
+            {member.objective && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="text-accent">🎯</span>
+                <span className="font-body text-sm text-text-primary">{member.objective}</span>
+              </div>
+            )}
             {/* Social links */}
             <div className="flex items-center gap-4 mt-3">
               {member.linkedin_url && (
@@ -625,6 +635,12 @@ function MemberProfile() {
               {member.bio && (
                 <p className="font-body text-sm text-text-secondary mt-2">{member.bio}</p>
               )}
+              {member.objective && (
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-accent">🎯</span>
+                  <span className="font-body text-sm text-text-primary">{member.objective}</span>
+                </div>
+              )}
 
               {/* Social links */}
               <div className="flex items-center gap-4 mt-3">
@@ -713,6 +729,17 @@ function MemberProfile() {
                   rows={2}
                 />
                 <span className="font-body text-xs text-text-secondary">{editBio.length}/160</span>
+              </div>
+              <div>
+                <label className="font-body text-xs text-text-secondary mb-1 block">🎯 Objectif</label>
+                <input
+                  type="text"
+                  value={editObjective}
+                  onChange={(e) => setEditObjective(e.target.value.slice(0, 100))}
+                  placeholder="Ex: Lancer le MVP, Avoir 10 clients, Atteindre 1k€ MRR..."
+                  className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm focus:border-accent focus:outline-none"
+                />
+                <span className="font-body text-xs text-text-secondary">{editObjective.length}/100</span>
               </div>
               <div className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-text-secondary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">

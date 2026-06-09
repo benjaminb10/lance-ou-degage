@@ -29,6 +29,7 @@ function OnboardingPage() {
     linkedin_url: "",
     twitter_url: "",
     bio: "",
+    objective: "",
     project_name: "",
     project_url: "",
     project_mrr: "",
@@ -93,6 +94,7 @@ function OnboardingPage() {
           twitter_url: formData.twitter_url || null,
           avatar_url: avatarUrl,
           bio: formData.bio || null,
+          objective: formData.objective || null,
           tier: 0, // Start at trottinette
           mrr: parseInt(formData.project_mrr) || 0,
           onboarding_completed: true,
@@ -241,6 +243,14 @@ function OnboardingPage() {
             value={formData.bio}
             onChange={(e) =>
               setFormData((f) => ({ ...f, bio: e.target.value }))
+            }
+          />
+          <Input
+            label="🎯 ton objectif sur 30 jours"
+            placeholder="Ex: Lancer le MVP, Avoir 10 clients, Atteindre 1k€ MRR..."
+            value={formData.objective}
+            onChange={(e) =>
+              setFormData((f) => ({ ...f, objective: e.target.value.slice(0, 100) }))
             }
           />
 
