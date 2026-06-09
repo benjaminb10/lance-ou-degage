@@ -266,7 +266,7 @@ export function Header() {
               </a>
               <Link
                 to="/login"
-                className="hidden md:inline-block px-3 md:px-4 py-1.5 border border-text-secondary/30 text-text-secondary font-body text-xs md:text-sm hover:border-accent hover:text-accent transition-colors"
+                className="px-3 md:px-4 py-1.5 border border-text-secondary/30 text-text-secondary font-body text-xs md:text-sm hover:border-accent hover:text-accent transition-colors"
               >
                 Connexion
               </Link>
