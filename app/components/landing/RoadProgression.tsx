@@ -1,70 +1,70 @@
 import { motion } from "framer-motion";
 import { Vehicle } from "./VehicleSVG";
 
-// Nouveau système de rang basé sur les étapes franchies (achievements)
+// Système de rang : trophées débloqués, puis MRR pour les derniers paliers
 // Du sol vers l'espace - le décor change de zone
 const achievements = [
   {
     tier: 0,
     vehicle: "trottinette",
     zone: "route",
-    achievement: "projet lancé",
-    description: "tu t'es engagé"
+    achievement: "départ",
+    description: "tu rejoins la route"
   },
   {
     tier: 1,
     vehicle: "vélo",
     zone: "route",
-    achievement: "domaine pris",
-    description: "nom de domaine réservé"
+    achievement: "1 trophée",
+    description: "premier trophée débloqué"
   },
   {
     tier: 2,
     vehicle: "moto",
     zone: "route",
-    achievement: "en prod",
-    description: "ton truc est en ligne"
+    achievement: "3 trophées",
+    description: "tu prends de la vitesse"
   },
   {
     tier: 3,
     vehicle: "voiture",
     zone: "route",
-    achievement: "paiement câblé",
-    description: "Stripe en place"
+    achievement: "5 trophées",
+    description: "ça roule sérieusement"
   },
   {
     tier: 4,
-    vehicle: "voiture de luxe",
+    vehicle: "voiture de sport",
     zone: "route",
-    achievement: "premier post",
-    description: "marketing lancé"
+    achievement: "8 trophées",
+    description: "machine de guerre"
   },
   {
     tier: 5,
     vehicle: "jetski",
     zone: "mer",
-    achievement: "premier utilisateur",
-    description: "quelqu'un utilise ton truc"
+    achievement: "11 trophées",
+    description: "tu quittes la route"
   },
   {
     tier: 6,
     vehicle: "yacht",
     zone: "mer",
-    achievement: "premier euro",
-    description: "premier client payant"
+    achievement: "5K€ de MRR",
+    description: "MRR vérifié via Stripe"
   },
   {
     tier: 7,
     vehicle: "jet privé",
     zone: "ciel",
-    achievement: "10 clients",
+    achievement: "10K€ de MRR",
     description: "ça commence à décoller"
   },
   {
     tier: 8,
     vehicle: "fusée",
     zone: "espace",
-    achievement: "décollage",
+    achievement: "20K€ de MRR",
     description: "ça scale"
   },
 ];
@@ -112,10 +112,10 @@ export function RoadProgression() {
           transition={{ delay: 0.2 }}
         >
           <p>
-            chaque étape franchie te fait monter de véhicule. tu commences en trottinette, tu finis dans l'espace.
+            chaque trophée débloqué te fait monter de véhicule. les derniers paliers se gagnent au MRR. tu commences en trottinette, tu finis dans l'espace.
           </p>
           <p className="text-text-primary">
-            chaque achievement se débloque en soumettant une preuve: un lien, une URL, un screenshot, ou via Stripe pour les étapes revenu.
+            chaque trophée se débloque en soumettant une preuve: un lien, une URL, un screenshot. le MRR est vérifié via Stripe.
           </p>
         </motion.div>
 

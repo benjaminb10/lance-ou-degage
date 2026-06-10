@@ -13,6 +13,25 @@ export const VEHICLE_NAMES = [
   "fusée",
 ] as const;
 
+// Métadonnées d'affichage par tier — garder synchro avec getTier
+export interface TierInfo {
+  name: (typeof VEHICLE_NAMES)[number];
+  requirement: string;
+  description: string;
+}
+
+export const TIER_INFO: TierInfo[] = [
+  { name: "trottinette", requirement: "départ", description: "tout le monde commence ici. pousse." },
+  { name: "vélo", requirement: "1 trophée", description: "premier trophée, premier coup de pédale." },
+  { name: "moto", requirement: "3 trophées", description: "ça accélère. tu prends le rythme." },
+  { name: "voiture", requirement: "5 trophées", description: "tu roules sérieux maintenant." },
+  { name: "sport", requirement: "8 trophées", description: "tu shippes plus vite que les autres." },
+  { name: "jetski", requirement: "11 trophées", description: "presque tous les trophées. t'as quitté la route." },
+  { name: "yacht", requirement: "5 000 € mrr", description: "ici c'est ton mrr qui parle." },
+  { name: "jet privé", requirement: "10 000 € mrr", description: "tu survoles le game." },
+  { name: "fusée", requirement: "20 000 € mrr", description: "ça scale. direction l'espace." },
+];
+
 // Source de vérité unique : tier calculé depuis trophées + MRR
 export function getTier(trophyCount: number, mrr: number): number {
   // Hauts tiers débloqués au MRR uniquement

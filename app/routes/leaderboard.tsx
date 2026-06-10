@@ -65,6 +65,12 @@ function LeaderboardPage() {
             <p className="font-body text-text-secondary mt-4 max-w-md mx-auto">
               ceux qui ont lancé, pas ceux qui parlent.
             </p>
+            <a
+              href="/trophees#tiers"
+              className="inline-block font-body text-sm text-text-secondary hover:text-accent transition-colors mt-3"
+            >
+              comment marchent les véhicules ? →
+            </a>
           </motion.div>
 
           {/* Stats */}

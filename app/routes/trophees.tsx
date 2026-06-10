@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase, type Achievement, type Member } from "~/lib/supabase";
 import { AchievementIcon } from "~/components/AchievementIcons";
+import { TierGrid } from "~/components/TierGrid";
 
 export const Route = createFileRoute("/trophees")({
   component: TropheesPage,
@@ -81,7 +82,13 @@ function TropheesPage() {
           </a>
         </div>
 
+        {/* Tiers / Véhicules */}
+        <TierGrid />
+
         {/* Achievements Grid */}
+        <h2 className="font-display text-xl text-text-primary mb-4">
+          les trophées
+        </h2>
         {loading ? (
           <div className="text-text-secondary font-body">Chargement...</div>
         ) : (
