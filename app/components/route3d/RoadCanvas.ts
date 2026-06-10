@@ -21,6 +21,7 @@ export interface SceneState {
   stripePhase: number;
   t: number;
   zones: ZoneSegment[];
+  horizonRatio?: number; // défaut HORIZON_RATIO (0.35)
 }
 
 // --- Palettes par zone ---------------------------------------------------
@@ -298,7 +299,7 @@ function drawPlanet(
 export function drawScene(ctx: CanvasRenderingContext2D, s: SceneState) {
   const { w, h, cameraZ, stripePhase, t, zones } = s;
   if (w === 0 || h === 0 || zones.length === 0) return;
-  const horizonY = Math.floor(h * HORIZON_RATIO);
+  const horizonY = Math.floor(h * (s.horizonRatio ?? HORIZON_RATIO));
   const cx = w / 2;
 
   // Ambiance selon la zone au point de focus (caméra déjà lissée)
