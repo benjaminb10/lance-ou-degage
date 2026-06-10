@@ -99,8 +99,8 @@ export function RankIndicator({
         </button>
       </div>
       <div className="hidden md:flex justify-between font-body text-[10px] text-text-secondary mt-1 px-14">
-        <span>dernier</span>
         <span>leader</span>
+        <span>dernier</span>
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ export function tierZone(tier: number): TierZone {
 
 // Hauteur monde au-dessus de la route (jet/fusée flottent)
 export function tierAltitude(tier: number): number {
-  if (tier >= 8) return 1.1;
+  if (tier >= 8) return 0.75;
   if (tier === 7) return 0.6;
   return 0;
 }
@@ -40,22 +40,24 @@ export interface ZoneSegment {
 export const PLAGE_LEN = 4; // largeur de la bande de sable route → mer
 
 // Découpe la route en zones d'après les tiers des membres + véhicules fantômes.
-// tiers[0] = rang 1 = z le plus grand ; le long de +z les zones sont croissantes.
+// Fantômes puis leader proches caméra : les zones décroissent le long de +z
+// (espace au premier plan → route au fond).
 export function computeZoneSegments(
   tiers: number[],
   total: number,
   ghostTiers: number[] = []
 ): ZoneSegment[] {
-  // liste (z croissant) : du dernier membre au leader, puis les fantômes
+  // liste des véhicules en z croissant
+  const gc = ghostTiers.length;
   const zs: number[] = [];
   const zoneList: TierZone[] = [];
-  for (let i = total - 1; i >= 0; i--) {
-    zs.push(memberZ(i, total));
-    zoneList.push(tierZone(tiers[i]));
-  }
-  for (let g = 0; g < ghostTiers.length; g++) {
-    zs.push(ghostZ(g, total));
+  for (let g = gc - 1; g >= 0; g--) {
+    zs.push(ghostZ(g, gc));
     zoneList.push(tierZone(ghostTiers[g]));
+  }
+  for (let i = 0; i < total; i++) {
+    zs.push(memberZ(i, gc));
+    zoneList.push(tierZone(tiers[i]));
   }
   if (zs.length === 0) {
     return [{ zone: "route", zStart: -Infinity, zEnd: Infinity }];
@@ -76,17 +78,21 @@ export function computeZoneSegments(
   return insertBeaches(segs);
 }
 
-// Insère une bande de sable centrée sur chaque frontière route → mer
+// Insère une bande de sable centrée sur chaque frontière route ↔ mer
+function isBeachBoundary(a: TierZone, b: TierZone): boolean {
+  return (a === "route" && b === "mer") || (a === "mer" && b === "route");
+}
+
 function insertBeaches(segs: ZoneSegment[]): ZoneSegment[] {
   const out: ZoneSegment[] = [];
   for (let i = 0; i < segs.length; i++) {
     const prev = segs[i - 1];
     const next = segs[i + 1];
     const s = { ...segs[i] };
-    if (prev && prev.zone === "route" && s.zone === "mer") {
+    if (prev && isBeachBoundary(prev.zone, s.zone)) {
       s.zStart += PLAGE_LEN / 2;
     }
-    if (next && s.zone === "route" && next.zone === "mer") {
+    if (next && isBeachBoundary(s.zone, next.zone)) {
       s.zEnd -= PLAGE_LEN / 2;
       out.push(s, { zone: "plage", zStart: s.zEnd, zEnd: s.zEnd + PLAGE_LEN });
     } else {
@@ -125,23 +131,24 @@ export function project(
 }
 
 // index 0 = rang 1 (le tableau est trié tier DESC, mrr DESC)
-// le leader est le plus loin devant sur la route
-export function memberZ(index: number, total: number): number {
-  return Z_FIRST_OFFSET + (total - 1 - index) * SPACING;
+// le leader est le plus proche de la caméra, juste derrière les fantômes
+export function memberZ(index: number, ghosts: number): number {
+  return Z_FIRST_OFFSET + (ghosts + index) * SPACING;
 }
 
 export function laneX(index: number): number {
   return [-0.45, 0.45, 0][index % 3] * (ROAD_WIDTH / 2);
 }
 
-// z d'un véhicule fantôme (tiers à débloquer, au-delà du leader)
-export function ghostZ(g: number, total: number): number {
-  return Z_FIRST_OFFSET + (Math.max(total - 1, 0) + g + 1) * SPACING;
+// z d'un véhicule fantôme (tiers à débloquer, devant le leader)
+// la fusée (dernier de ghostTiers) est la plus proche de la caméra
+export function ghostZ(g: number, ghosts: number): number {
+  return Z_FIRST_OFFSET + (ghosts - 1 - g) * SPACING;
 }
 
 export function maxCameraZ(total: number, ghosts = 0): number {
-  const lastZ = ghosts > 0 ? ghostZ(ghosts - 1, total) : memberZ(0, total);
-  return Math.max(0, lastZ - VIEW_BACK);
+  const lastSlot = Math.max(total + ghosts - 1, 0);
+  return Math.max(0, Z_FIRST_OFFSET + lastSlot * SPACING - VIEW_BACK);
 }
 
 export function clamp(v: number, min: number, max: number): number {

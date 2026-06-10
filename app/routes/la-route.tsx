@@ -67,8 +67,14 @@ function LaRoutePage() {
           la route.
         </h1>
         <p className="font-body text-xs md:text-sm text-text-secondary mt-2">
-          scrolle pour remonter le peloton.
+          scrolle pour descendre le classement.
         </p>
+        <a
+          href="/trophees#tiers"
+          className="pointer-events-auto inline-block font-body text-xs text-text-secondary hover:text-accent transition-colors mt-2"
+        >
+          c'est quoi les véhicules ? →
+        </a>
       </div>
     </main>
   );

@@ -25,6 +25,8 @@ interface RouteSceneProps {
   members: Member[];
 }
 
+// La fusée (objectif final) est face caméra au chargement,
+// on scrolle pour descendre le classement (#1, #2, ... dernier au fond).
 export function RouteScene({ members }: RouteSceneProps) {
   const total = members.length;
   const tiers = useMemo(() => members.map(memberTier), [members]);
@@ -102,9 +104,8 @@ export function RouteScene({ members }: RouteSceneProps) {
     const s = state.current;
     if (s.dragDist > 8) return; // c'était un drag, pas un tap
     window.clearTimeout(closeTimer.current);
-    setHoveredId((prev) =>
-      prev === id && s.lastPointerType !== "mouse" ? null : id
-    );
+    // toggle : re-cliquer le véhicule referme la carte détaillée
+    setHoveredId((prev) => (prev === id ? null : id));
   }, []);
 
   useEffect(() => {
@@ -114,7 +115,12 @@ export function RouteScene({ members }: RouteSceneProps) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const s = state.current;
-    const maxZ = maxCameraZ(total, ghostTiers.length);
+    const gCount = ghostTiers.length;
+    const maxZ = maxCameraZ(total, gCount);
+    const mZ = (i: number) => memberZ(i, gCount);
+    const gZ = (g: number) => ghostZ(g, gCount);
+    // caméra à z=0 = focus sur la fusée (objectif final),
+    // puis on scrolle pour découvrir le #1, #2, etc.
 
     function resize() {
       if (!container || !canvas || !ctx) return;
@@ -133,22 +139,20 @@ export function RouteScene({ members }: RouteSceneProps) {
     }
 
     // Index du véhicule actuellement "au focus" selon la caméra
-    // (indices négatifs = fantômes au-delà du leader : -1 = premier fantôme)
+    // (indices négatifs = fantômes devant le leader : -1 = yacht ... -gCount = fusée)
     function focusIdx(z: number) {
-      const fromBack = Math.round((z + VIEW_BACK - Z_FIRST_OFFSET) / SPACING);
-      return clamp(total - 1 - fromBack, -ghostTiers.length, total - 1);
+      const slot = Math.round((z + VIEW_BACK - Z_FIRST_OFFSET) / SPACING);
+      return clamp(slot - gCount, -gCount, total - 1);
     }
     function jumpToIndex(i: number) {
-      const idx = clamp(i, -ghostTiers.length, total - 1);
-      setTarget(
-        (idx >= 0 ? memberZ(idx, total) : ghostZ(-idx - 1, total)) - VIEW_BACK
-      );
+      const idx = clamp(i, -gCount, total - 1);
+      setTarget((idx >= 0 ? mZ(idx) : gZ(-idx - 1)) - VIEW_BACK);
     }
     controls.current = {
-      // prev = vers l'arrière du peloton (rang plus bas)
-      prev: () => jumpToIndex(focusIdx(s.targetZ) + 1),
-      // next = vers le leader
-      next: () => jumpToIndex(focusIdx(s.targetZ) - 1),
+      // prev = rang précédent (vers le leader puis les véhicules à débloquer)
+      prev: () => jumpToIndex(focusIdx(s.targetZ) - 1),
+      // next = rang suivant (vers le dernier, au fond)
+      next: () => jumpToIndex(focusIdx(s.targetZ) + 1),
       jumpFrac: (f: number) => setTarget(f * maxZ),
     };
 
@@ -170,8 +174,10 @@ export function RouteScene({ members }: RouteSceneProps) {
       const dy = e.clientY - s.lastY;
       s.lastY = e.clientY;
       s.dragDist += Math.abs(dy);
-      // drag vers le bas = on tire la route vers soi = on avance
-      setTarget(s.targetZ + dy * 0.03);
+      // tactile : geste de scroll naturel (glisser vers le haut = avancer)
+      // souris : on tire la route vers soi (glisser vers le bas = avancer)
+      const dir = s.lastPointerType === "touch" ? -1 : 1;
+      setTarget(s.targetZ + dir * dy * 0.03);
     }
     function onPointerUp() {
       s.dragging = false;
@@ -182,10 +188,11 @@ export function RouteScene({ members }: RouteSceneProps) {
     window.addEventListener("pointercancel", onPointerUp);
 
     function onKey(e: KeyboardEvent) {
-      if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+      // bas/droite = descendre le classement, haut/gauche = remonter
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         e.preventDefault();
         controls.current.next();
-      } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
         e.preventDefault();
         controls.current.prev();
       }
@@ -202,7 +209,8 @@ export function RouteScene({ members }: RouteSceneProps) {
 
       s.cameraZ += (s.targetZ - s.cameraZ) * Math.min(1, dt * 7);
       // les bandes défilent en continu, même sans interaction
-      s.stripePhase = (s.stripePhase + dt * 1.2) % 12;
+      // (le peloton vient vers nous, la route file vers l'horizon)
+      s.stripePhase = (s.stripePhase - dt * 1.2 + 12) % 12;
 
       if (ctx) {
         drawScene(ctx, {
@@ -223,7 +231,7 @@ export function RouteScene({ members }: RouteSceneProps) {
         const p = project(
           laneX(i),
           tierAltitude(tiers[i]),
-          memberZ(i, total),
+          mZ(i),
           s.cameraZ,
           s.w,
           s.h
@@ -248,7 +256,7 @@ export function RouteScene({ members }: RouteSceneProps) {
         const p = project(
           laneX(total + g),
           tierAltitude(tier),
-          ghostZ(g, total),
+          gZ(g),
           s.cameraZ,
           s.w,
           s.h
@@ -273,7 +281,7 @@ export function RouteScene({ members }: RouteSceneProps) {
           const p = project(
             laneX(i),
             tierAltitude(tiers[i]),
-            memberZ(i, total),
+            mZ(i),
             s.cameraZ,
             s.w,
             s.h
@@ -357,7 +365,6 @@ export function RouteScene({ members }: RouteSceneProps) {
           member={m}
           rank={i + 1}
           registerEl={registerEl}
-          onHover={handleHover}
           onTap={handleTap}
         />
       ))}
@@ -393,6 +400,7 @@ export function RouteScene({ members }: RouteSceneProps) {
       )}
 
       {/* Indicateur de classement + navigation */}
+      {/* gauche de la barre = fusée/leader, droite = dernier */}
       <RankIndicator
         total={total}
         zoneBands={zoneBands}
