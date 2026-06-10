@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Vehicle } from "./landing/VehicleSVG";
 import type { Member } from "~/lib/supabase";
+import { memberTier } from "~/lib/tier";
 
 interface MemberCardProps {
   member: Member;
@@ -16,6 +17,7 @@ export function formatMRR(mrr: number): string {
 }
 
 export function MemberCard({ member, rank, delay = 0 }: MemberCardProps) {
+  const tier = memberTier(member);
   return (
     <a href={`/membre/${member.id}`}>
       <motion.div
@@ -99,7 +101,7 @@ export function MemberCard({ member, rank, delay = 0 }: MemberCardProps) {
               </span>
             </div>
             <div className="w-10 h-10">
-              <Vehicle tier={member.tier} className="w-full h-full" />
+              <Vehicle tier={tier} className="w-full h-full" />
             </div>
           </div>
         </div>
@@ -179,7 +181,7 @@ export function MemberCard({ member, rank, delay = 0 }: MemberCardProps) {
               </div>
             </div>
             <div className="w-12 h-12">
-              <Vehicle tier={member.tier} className="w-full h-full" />
+              <Vehicle tier={tier} className="w-full h-full" />
             </div>
           </div>
         </div>

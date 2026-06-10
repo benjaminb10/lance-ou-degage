@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth, signOut } from "~/lib/auth";
 import { supabase, type MemberAchievement } from "~/lib/supabase";
+import { getTier, VEHICLE_NAMES } from "~/lib/tier";
 import { AchievementIcon } from "~/components/AchievementIcons";
 import { Vehicle } from "~/components/landing/VehicleSVG";
 
@@ -51,20 +52,6 @@ export function Header() {
   const displayedAchievements = achievements.slice(0, 5);
   const extraCount = achievements.length - 5;
 
-  // Calculate tier from trophies and MRR
-  function getTier(trophyCount: number, mrr: number): number {
-    // Fusée = 10k MRR
-    if (mrr >= 10000) return 8;
-    // Other tiers based on trophies
-    if (trophyCount >= 17) return 7;
-    if (trophyCount >= 14) return 6;
-    if (trophyCount >= 11) return 5;
-    if (trophyCount >= 8) return 4;
-    if (trophyCount >= 5) return 3;
-    if (trophyCount >= 3) return 2;
-    if (trophyCount >= 1) return 1;
-    return 0;
-  }
   const tier = getTier(achievements.length, member?.mrr || 0);
 
   return (
@@ -87,6 +74,16 @@ export function Header() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <span className="hidden md:inline">Leaderboard</span>
+          </Link>
+          <Link
+            to="/la-route"
+            className="flex items-center gap-1.5 font-body text-sm text-text-secondary hover:text-accent transition-colors"
+            title="La Route"
+          >
+            <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 20L10 4M20 20L14 4M12 7v2M12 12v2M12 17v2" />
+            </svg>
+            <span className="hidden md:inline">La Route</span>
           </Link>
           <Link
             to="/feed"
@@ -182,7 +179,7 @@ export function Header() {
                     <div className="flex-shrink-0 text-center">
                       <Vehicle tier={tier} className="w-9 h-9" />
                       <div className="font-body text-[9px] text-text-secondary mt-0.5">
-                        {["trottinette", "vélo", "moto", "voiture", "sport", "jetski", "yacht", "jet", "fusée"][tier]}
+                        {VEHICLE_NAMES[tier]}
                       </div>
                     </div>
                   </a>

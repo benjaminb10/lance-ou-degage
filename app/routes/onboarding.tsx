@@ -95,7 +95,6 @@ function OnboardingPage() {
           avatar_url: avatarUrl,
           bio: formData.bio || null,
           objective: formData.objective || null,
-          tier: 0, // Start at trottinette
           mrr: parseInt(formData.project_mrr) || 0,
           onboarding_completed: true,
           is_founder: true, // Early adopters are founders

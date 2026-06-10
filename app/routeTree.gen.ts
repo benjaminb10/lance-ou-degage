@@ -14,6 +14,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MonEspaceRouteImport } from './routes/mon-espace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as LaRouteRouteImport } from './routes/la-route'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const LoginRoute = LoginRouteImport.update({
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LaRouteRoute = LaRouteRouteImport.update({
+  id: '/la-route',
+  path: '/la-route',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedRoute = FeedRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/feed': typeof FeedRoute
+  '/la-route': typeof LaRouteRoute
   '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/mon-espace': typeof MonEspaceRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/feed': typeof FeedRoute
+  '/la-route': typeof LaRouteRoute
   '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/mon-espace': typeof MonEspaceRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/feed': typeof FeedRoute
+  '/la-route': typeof LaRouteRoute
   '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/mon-espace': typeof MonEspaceRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/feed'
+    | '/la-route'
     | '/leaderboard'
     | '/login'
     | '/mon-espace'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/feed'
+    | '/la-route'
     | '/leaderboard'
     | '/login'
     | '/mon-espace'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/feed'
+    | '/la-route'
     | '/leaderboard'
     | '/login'
     | '/mon-espace'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   FeedRoute: typeof FeedRoute
+  LaRouteRoute: typeof LaRouteRoute
   LeaderboardRoute: typeof LeaderboardRoute
   LoginRoute: typeof LoginRoute
   MonEspaceRoute: typeof MonEspaceRoute
@@ -197,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/la-route': {
+      id: '/la-route'
+      path: '/la-route'
+      fullPath: '/la-route'
+      preLoaderRoute: typeof LaRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/feed': {
       id: '/feed'
       path: '/feed'
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   FeedRoute: FeedRoute,
+  LaRouteRoute: LaRouteRoute,
   LeaderboardRoute: LeaderboardRoute,
   LoginRoute: LoginRoute,
   MonEspaceRoute: MonEspaceRoute,

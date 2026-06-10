@@ -35,7 +35,6 @@ export interface Member {
   avatar_url: string | null;
   bio: string | null;
   objective: string | null;
-  tier: number;
   mrr: number;
   joined_at: string;
   onboarding_completed: boolean;

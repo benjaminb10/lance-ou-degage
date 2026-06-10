@@ -8,6 +8,7 @@ import { Vehicle } from "~/components/landing/VehicleSVG";
 import { AchievementIcon } from "~/components/AchievementIcons";
 import { Button } from "~/components/ui/Button";
 import { postUpdate, getMemberUpdates, hasPostedToday } from "~/lib/streak";
+import { getTier, VEHICLE_NAMES } from "~/lib/tier";
 
 function formatRelativeDate(dateString: string): string {
   const date = new Date(dateString);
@@ -444,18 +445,6 @@ function MemberProfile() {
     );
   }
 
-  // Calcul du tier basé sur le nombre de trophées et MRR
-  function getTier(trophyCount: number, mrr: number): number {
-    if (mrr >= 10000) return 8;        // Fusée = 10k MRR
-    if (trophyCount >= 17) return 7;   // Jet privé
-    if (trophyCount >= 14) return 6;   // Yacht
-    if (trophyCount >= 11) return 5;   // Jetski
-    if (trophyCount >= 8) return 4;    // Voiture sport
-    if (trophyCount >= 5) return 3;    // Voiture
-    if (trophyCount >= 3) return 2;    // Moto
-    if (trophyCount >= 1) return 1;    // Vélo
-    return 0;                          // Trottinette
-  }
   const tier = getTier(memberAchievements.length, member?.mrr || 0);
   const isCountdownActive = member.countdown_started_at && countdown.days + countdown.hours + countdown.minutes + countdown.seconds > 0;
   const isCountdownExpired = member.countdown_started_at && countdown.days + countdown.hours + countdown.minutes + countdown.seconds === 0;
@@ -532,7 +521,7 @@ function MemberProfile() {
               <div className="flex-shrink-0 text-center">
                 <Vehicle tier={tier} className="w-12 h-12" />
                 <div className="font-body text-[10px] text-text-secondary mt-0.5">
-                  {["trottinette", "vélo", "moto", "voiture", "sports car", "jetski", "yacht", "jet privé", "fusée"][tier]}
+                  {VEHICLE_NAMES[tier]}
                 </div>
               </div>
             </div>
@@ -711,7 +700,7 @@ function MemberProfile() {
             <div className="flex-shrink-0 text-center">
               <Vehicle tier={tier} className="w-14 h-14" />
               <div className="font-body text-xs text-text-secondary mt-1">
-                {["trottinette", "vélo", "moto", "voiture", "sports car", "jetski", "yacht", "jet privé", "fusée"][tier]}
+                {VEHICLE_NAMES[tier]}
               </div>
             </div>
           </div>

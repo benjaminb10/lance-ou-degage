@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase, type Member } from "~/lib/supabase";
 import { Button } from "~/components/ui/Button";
+import { memberTier } from "~/lib/tier";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -183,7 +184,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
     const { data, error } = await supabase
       .from("members")
-      .select("*, projects(*)")
+      .select("*, projects(*), member_achievements(achievement_id)")
       .order("created_at", { ascending: false });
 
     console.log("Fetch members result:", { data, error });
@@ -236,7 +237,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       email: member.email,
       whatsapp: member.whatsapp || "",
       bio: member.bio || "",
-      tier: member.tier,
       mrr: member.mrr,
       linkedin_url: member.linkedin_url || "",
       twitter_url: member.twitter_url || "",
@@ -350,15 +350,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         />
                       </div>
                       <div>
-                        <label className="block font-body text-xs text-text-secondary mb-1">Tier (0-8)</label>
-                        <input
-                          type="number"
-                          value={editForm.tier || 0}
-                          onChange={(e) => setEditForm({ ...editForm, tier: parseInt(e.target.value) })}
-                          className="w-full bg-bg-darker border border-text-secondary/30 px-3 py-2 text-text-primary font-body text-sm"
-                        />
-                      </div>
-                      <div>
                         <label className="block font-body text-xs text-text-secondary mb-1">MRR (€)</label>
                         <input
                           type="number"
@@ -434,7 +425,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         )}
                       </div>
                       <div className="font-body text-xs text-text-secondary">
-                        {member.email} · Tier {member.tier} · {member.mrr}€ MRR
+                        {member.email} · Tier {memberTier(member)} · {member.mrr}€ MRR
                         {member.countdown_started_at && (
                           <span className="ml-2 text-accent">
                             · ⏱ {getDaysRemaining(member.countdown_started_at)}j restants

@@ -5,6 +5,7 @@ import { supabase, type Member } from "~/lib/supabase";
 import { MemberCard } from "~/components/MemberCard";
 import { Button } from "~/components/ui/Button";
 import { StatsGrid } from "~/components/StatsGrid";
+import { memberTier } from "~/lib/tier";
 
 export const Route = createFileRoute("/leaderboard")({
   component: LeaderboardPage,
@@ -26,15 +27,17 @@ function LeaderboardPage() {
         `
         )
         .eq("onboarding_completed", true)
-        .eq("visible", true)
-        .order("tier", { ascending: false })
-        .order("mrr", { ascending: false });
+        .eq("visible", true);
 
       if (error) {
         console.error("Error fetching members:", error);
       }
 
-      setMembers(data || []);
+      // Tri par tier calculé (trophées + MRR) puis MRR
+      const sorted = (data || []).sort(
+        (a: Member, b: Member) => memberTier(b) - memberTier(a) || b.mrr - a.mrr
+      );
+      setMembers(sorted);
       setLoading(false);
     }
     fetchMembers();
