@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { supabase, type Member } from "./supabase";
 import type { User, Session } from "@supabase/supabase-js";
 
+export const ADMIN_EMAIL = "benoudis.benjamin@gmail.com";
+
 interface AuthState {
   user: User | null;
   member: Member | null;

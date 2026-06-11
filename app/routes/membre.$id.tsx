@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { supabase, type Member, type Achievement, type MemberAchievement, type Project, type Update } from "~/lib/supabase";
-import { useAuth } from "~/lib/auth";
+import { useAuth, ADMIN_EMAIL } from "~/lib/auth";
 import { Vehicle } from "~/components/landing/VehicleSVG";
 import { AchievementIcon } from "~/components/AchievementIcons";
 import { Button } from "~/components/ui/Button";
@@ -64,6 +64,12 @@ function MemberProfile() {
 
   // Check if current user is the owner of this profile
   const isOwner = user && member?.auth_id === user.id;
+
+  // Admin can manage any member's countdown
+  const isAdmin = user?.email === ADMIN_EMAIL;
+
+  // Admin can edit any profile like the owner
+  const canEdit = isOwner || isAdmin;
 
   // Set default tab based on URL param or owner status
   useEffect(() => {
@@ -216,6 +222,29 @@ function MemberProfile() {
     setLoading(false);
   }
 
+  // Admin : lancer ou relancer le compteur 30j
+  async function handleStartCountdown() {
+    if (!member) return;
+    if (member.countdown_started_at) {
+      if (!confirm(`${member.name} a déjà un compteur en cours. Relancer ?`)) {
+        return;
+      }
+    }
+
+    const startedAt = new Date().toISOString();
+    const { error } = await supabase
+      .from("members")
+      .update({ countdown_started_at: startedAt })
+      .eq("id", member.id);
+
+    if (error) {
+      console.error("Error starting countdown:", error);
+      alert("Erreur lors du lancement du compteur");
+    } else {
+      setMember({ ...member, countdown_started_at: startedAt });
+    }
+  }
+
   async function fetchAchievements() {
     // Fetch all achievements
     const { data: allAchievements } = await supabase
@@ -234,7 +263,7 @@ function MemberProfile() {
   }
 
   async function toggleAchievement(achievementId: string) {
-    if (!member || !isOwner) return;
+    if (!member || !canEdit) return;
 
     const isUnlocked = memberAchievements.some((ma) => ma.achievement_id === achievementId);
 
@@ -270,7 +299,7 @@ function MemberProfile() {
   }
 
   async function saveMrr() {
-    if (!member || !isOwner) return;
+    if (!member || !canEdit) return;
 
     const { error } = await supabase
       .from("members")
@@ -283,7 +312,7 @@ function MemberProfile() {
   }
 
   async function saveProjects() {
-    if (!member || !isOwner) return;
+    if (!member || !canEdit) return;
 
     // Get original project IDs
     const originalIds = (member.projects || []).map((p) => p.id);
@@ -387,7 +416,7 @@ function MemberProfile() {
   }
 
   async function saveProfileInfo() {
-    if (!member || !isOwner) return;
+    if (!member || !canEdit) return;
 
     const { error } = await supabase
       .from("members")
@@ -480,8 +509,8 @@ function MemberProfile() {
             <div className="flex items-center gap-4 mb-4">
               {/* Avatar */}
               <div
-                className={`relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0 ${isOwner && isEditing ? 'cursor-pointer' : ''}`}
-                onClick={() => isOwner && isEditing && avatarInputRef.current?.click()}
+                className={`relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0 ${canEdit && isEditing ? 'cursor-pointer' : ''}`}
+                onClick={() => canEdit && isEditing && avatarInputRef.current?.click()}
               >
                 {member.avatar_url ? (
                   <img src={member.avatar_url} alt={member.name} className="w-full h-full object-cover" />
@@ -491,7 +520,7 @@ function MemberProfile() {
                   </div>
                 )}
                 {/* Edit overlay */}
-                {isOwner && isEditing && (
+                {canEdit && isEditing && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     {uploadingAvatar ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -578,8 +607,8 @@ function MemberProfile() {
           <div className="hidden md:flex items-start gap-4">
             {/* Avatar */}
             <div
-              className={`relative w-20 h-20 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0 ${isOwner && isEditing ? 'cursor-pointer' : ''}`}
-              onClick={() => isOwner && isEditing && avatarInputRef.current?.click()}
+              className={`relative w-20 h-20 rounded-full overflow-hidden border-2 border-accent bg-bg-darker flex-shrink-0 ${canEdit && isEditing ? 'cursor-pointer' : ''}`}
+              onClick={() => canEdit && isEditing && avatarInputRef.current?.click()}
             >
               {member.avatar_url ? (
                 <img
@@ -593,7 +622,7 @@ function MemberProfile() {
                 </div>
               )}
               {/* Edit overlay */}
-              {isOwner && isEditing && (
+              {canEdit && isEditing && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                   {uploadingAvatar ? (
                     <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -706,7 +735,7 @@ function MemberProfile() {
           </div>
 
           {/* Profile edit (bio + social links) - hidden on trophees tab */}
-          {isOwner && isEditing && activeTab !== "trophees" && (
+          {canEdit && isEditing && activeTab !== "trophees" && (
             <div className="mt-6 pt-6 border-t border-text-secondary/20 space-y-3">
               <div>
                 <label className="font-body text-xs text-text-secondary mb-1 block">Bio</label>
@@ -822,7 +851,7 @@ function MemberProfile() {
                 <div className="font-body text-xs text-text-secondary">MRR</div>
               </div>
             </div>
-            {isOwner && (
+            {canEdit && (
               isEditing ? (
                 <Button
                   variant="primary"
@@ -909,6 +938,19 @@ function MemberProfile() {
           </motion.div>
         )}
 
+        {/* Admin : lancer/relancer le compteur */}
+        {isAdmin && (
+          <div className="mt-6 flex justify-center">
+            <Button
+              variant={member.countdown_started_at ? "secondary" : "primary"}
+              size="md"
+              onClick={handleStartCountdown}
+            >
+              {member.countdown_started_at ? "relancer le compteur" : "lancer le compteur"}
+            </Button>
+          </div>
+        )}
+
         {/* Tabs Navigation */}
         <div className="mt-6 flex border-b border-text-secondary/20">
           <button
@@ -961,7 +1003,7 @@ function MemberProfile() {
           {/* PROJETS TAB */}
           {activeTab === "projets" && (
             <>
-              {isOwner && isEditing ? (
+              {canEdit && isEditing ? (
                 <div className="space-y-4">
                   {editProjects.map((project, index) => (
                     <div
@@ -1058,13 +1100,13 @@ function MemberProfile() {
               ) : (
                 <div className="bg-bg-dark border border-text-secondary/20 p-8 text-center">
                   <p className="font-body text-sm text-text-secondary">
-                    {isOwner ? "Clique sur \"modifier\" pour ajouter tes projets" : "Aucun projet pour l'instant"}
+                    {canEdit ? "Clique sur \"modifier\" pour ajouter tes projets" : "Aucun projet pour l'instant"}
                   </p>
                 </div>
               )}
 
               {/* Bouton Modifier en bas */}
-              {isOwner && !isEditing && (
+              {canEdit && !isEditing && (
                 <div className="mt-4 text-center">
                   <Button
                     variant="secondary"
@@ -1186,7 +1228,7 @@ function MemberProfile() {
           {/* TROPHEES TAB */}
           {activeTab === "trophees" && (
             <>
-              {isOwner && isEditing ? (
+              {canEdit && isEditing ? (
                 // Edit mode: list with checkboxes
                 <>
                   <p className="font-body text-sm text-text-secondary mb-4">
@@ -1355,7 +1397,7 @@ function MemberProfile() {
                   )}
 
                   {/* Bouton Modifier en bas */}
-                  {isOwner && (
+                  {canEdit && (
                     <div className="mt-4 text-center">
                       <Button
                         variant="secondary"

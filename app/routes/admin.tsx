@@ -4,12 +4,11 @@ import { motion } from "framer-motion";
 import { supabase, type Member } from "~/lib/supabase";
 import { Button } from "~/components/ui/Button";
 import { memberTier } from "~/lib/tier";
+import { ADMIN_EMAIL } from "~/lib/auth";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
-
-const ADMIN_EMAIL = "benoudis.benjamin@gmail.com";
 
 function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
